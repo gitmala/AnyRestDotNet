@@ -1,0 +1,27 @@
+{
+	"Endpoints":
+	[
+		{ "Id": "MyEndPoint1", "Route": "api1/file", "Actions":
+			[
+				//Test: Output a file (name is qparm)
+				{ "Method": "GET", "Type": "CommandResult", "CommandLine": "type %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ] },
+				{ "Method": "POST", "Type": "CommandResult", "CommandLine": "anyRest.exe -io > %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ] }
+			]
+		},
+
+		{ "Id": "MyEndPoint2", "Route": "api2/file", "Actions":
+			[
+				//Test: Output a file (name is qparm)
+				{ "Method": "GET", "Type": "Stream", "CommandLine": "type %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ] , "ContentType": "text/plaintext", "ReturnOnOK": "200"},
+				{ "Method": "POST", "Type": "Stream", "CommandLine": "anyRest.exe -io > %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ], "ContentType": "text/plaintext", "ReturnOnOK": "200"}
+			]
+		},
+
+		{ "Id": "MyEndPoint2", "Route": "api3/Round", "Actions":
+			[
+				{ "Method": "PUT", "Type": "Stream", "CommandLine": "anyRest.exe -io", "Parms": [], "ContentType": "text/plaintext", "ReturnOnOK": "200"},
+				{ "Method": "POST", "Type": "Stream", "CommandLine": "anyRest.exe -s 5000 && anyRest.exe -io", "Parms": [], "ContentType": "text/plaintext", "ReturnOnOK": "200"}
+			]
+		}
+	]
+}
