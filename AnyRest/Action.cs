@@ -8,10 +8,10 @@ namespace AnyRest
         IActionResult ReturnFromCommand(HttpRequest request, HttpResponse response);
     }
 
-    struct CommandResultAction : IActionReturner
+    struct CommandResultReturner : IActionReturner
     {
         string Command;
-        public CommandResultAction(string command)
+        public CommandResultReturner(string command)
         {
             Command = command;
         }
@@ -45,6 +45,15 @@ namespace AnyRest
                 response.Headers.Add("Content-Disposition", ContentDisposition);
             return new FileStreamResult(commandOutput, ContentType);
         }
+    }
+
+    class Action
+    {
+        public string HttpMethod;
+        public string CommandFile;
+        public string CommandArguments;
+
+        public IActionReturner actionReturner;
     }
 
 }

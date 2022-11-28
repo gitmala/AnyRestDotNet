@@ -25,7 +25,7 @@ namespace AnyRest
         {
             switch (Type) {
                 case "CommandResult":
-                    return new CommandResultAction(CommandLine);
+                    return new CommandResultReturner(CommandLine);
                 case "Stream":
                     return new FileStreamReturner(CommandLine, ContentType);
                 default:
