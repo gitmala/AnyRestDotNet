@@ -83,7 +83,7 @@ namespace AnyRest
                 var stdErrorTask = p.StandardError.ReadToEndAsync();
 
                 //Use WaitForProcessExit so process is killed after timeout?
-                //In that case do not use using() since 
+                //In that case do not use using() since WaitForProcessExit disposes p
                 p.WaitForExit(timeOut);
 
                 var result = new CommandResult()
