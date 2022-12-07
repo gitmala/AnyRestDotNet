@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AnyRest
@@ -14,11 +15,11 @@ namespace AnyRest
     }
     class CommandExecuter
     {
-        static void streamBodyToStdInput(HttpRequest request, Process p)
+        static void StreamBodyToStdInput(Stream bodyStream, Stream stdIn)
         {
             try
             {
-                request.Body.CopyToAsync(p.StandardInput.BaseStream).Wait();
+                bodyStream.CopyToAsync(stdIn).Wait();
             }
             catch (Exception ex)
             {
@@ -28,7 +29,7 @@ namespace AnyRest
 
             try
             {
-                p.StandardInput.Close();
+                stdIn.Close();
             }
             catch (Exception ex)
             {
@@ -61,11 +62,13 @@ namespace AnyRest
                     p.StartInfo.Environment.Add($"AnyRESTRouteParm_{routeValue.Key}", (string)routeValue.Value);
             }
 
-            p.Start();
-
-            Task.Run(() => streamBodyToStdInput(request, p));
-
-            return p;
+            if (p.Start())
+            {
+                Task.Run(() => StreamBodyToStdInput(request.Body, p.StandardInput.BaseStream));
+                return p;
+            }
+            else
+                return null; //Throw instead
         }
 
         public static void WaitForProcessExit(Process p, int timeOut)
