@@ -29,7 +29,7 @@ namespace AnyRest
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest).AddXmlSerializerFormatters();
+            services.AddMvc().AddXmlSerializerFormatters();
 
             services.AddLogging(c => c.ClearProviders());
 
