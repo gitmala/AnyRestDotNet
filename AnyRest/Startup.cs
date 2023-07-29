@@ -12,7 +12,7 @@ namespace AnyRest
 {
     public class TranslationTransformer : DynamicRouteValueTransformer
     {
-        public override async ValueTask<RouteValueDictionary> TransformAsync(HttpContext httpContext, RouteValueDictionary values)
+        public override ValueTask<RouteValueDictionary> TransformAsync(HttpContext httpContext, RouteValueDictionary values)
         {
             //if (values["trailing_data"] == null)
             {
@@ -21,7 +21,7 @@ namespace AnyRest
                 //values["action"] = httpContext.Request.Method;
                 values["endpointSpecification"] = State;
             }
-            return values;
+            return new ValueTask<RouteValueDictionary>(values);
         }
     }
 
