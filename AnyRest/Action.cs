@@ -3,42 +3,47 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AnyRest
 {
-    public interface IActionReturner
+    public abstract class ActionReturner
     {
-        IActionResult ReturnFromCommand(HttpRequest request, HttpResponse response);
+        protected string CommandLine;
+        protected string ContentType;
+        protected string ContentDisposition = null;
+        QueryParmConfig[] QueryParmConfig;
+
+        public ActionReturner(string commandLine, string contentType, QueryParmConfig[] queryParmConfig, string contentDisposition)
+        {
+            CommandLine = commandLine;
+            ContentType = contentType;
+            QueryParmConfig = queryParmConfig;
+            ContentDisposition = contentDisposition;
+        }
+
+        public abstract IActionResult ReturnFromCommand(HttpRequest request, HttpResponse response);
     }
 
-    struct CommandResultReturner : IActionReturner
+    class CommandResultReturner : ActionReturner
     {
-        string Command;
-        public CommandResultReturner(string command)
+        public CommandResultReturner(string commandLine, QueryParmConfig[] queryParmConfig) : base(commandLine, null, queryParmConfig, null)
         {
-            Command = command;
         }
-        public IActionResult ReturnFromCommand(HttpRequest request, HttpResponse response)
+        public override IActionResult ReturnFromCommand(HttpRequest request, HttpResponse response)
         {
-            var result = CommandExecuter.ExecuteCommand(Command, request);
+            var result = CommandExecuter.ExecuteCommand(CommandLine, request);
             return new OkObjectResult(result);
         }
     }
 
-    class FileStreamReturner : IActionReturner
+    class FileStreamReturner : ActionReturner
     {
-        string CommandLine;
-        string ContentType;
-        string ContentDisposition = null;
-        public FileStreamReturner(string commandLine, string contentType)
+        public FileStreamReturner(string commandLine, QueryParmConfig[] queryParmConfig, string contentType) : base(commandLine, contentType, queryParmConfig, null)
         {
-            CommandLine = commandLine;
-            ContentType = contentType;
         }
 
-        public FileStreamReturner(string commandLine, string contentType, string contentDisposition) : this(commandLine, contentType)
+        public FileStreamReturner(string commandLine, string contentType, QueryParmConfig[] queryParmConfig, string contentDisposition) : base(commandLine, contentType, queryParmConfig, contentDisposition)
         {
-            ContentDisposition = contentDisposition;
         }
 
-        public IActionResult ReturnFromCommand(HttpRequest request, HttpResponse response)
+        public override IActionResult ReturnFromCommand(HttpRequest request, HttpResponse response)
         {
             var commandOutput = CommandExecuter.ExecuteDataCommand(CommandLine, request);
             if (ContentDisposition != null)
@@ -53,7 +58,7 @@ namespace AnyRest
         public string CommandFile;
         public string CommandArguments;
 
-        public IActionReturner actionReturner;
+        public ActionReturner actionReturner;
     }
 
 }

@@ -21,13 +21,13 @@ namespace AnyRest
         public string ContentType;
         public string ReturnOnOk;
 
-        public IActionReturner AsAction()
+        public ActionReturner AsAction()
         {
             switch (Type) {
                 case "CommandResult":
-                    return new CommandResultReturner(CommandLine);
+                    return new CommandResultReturner(CommandLine, Parms);
                 case "Stream":
-                    return new FileStreamReturner(CommandLine, ContentType);
+                    return new FileStreamReturner(CommandLine, Parms, ContentType);
                 default:
                     throw new ApplicationException("Unknown actiontype");
             }
@@ -42,9 +42,9 @@ namespace AnyRest
 
         public UserEndpoint AsEndpoint()
         {
-            var actions = new List<KeyValuePair<string, IActionReturner>>();
+            var actions = new List<KeyValuePair<string, ActionReturner>>();
             foreach (var Action in Actions)
-                actions.Add(new KeyValuePair<string, IActionReturner>(Action.Method, Action.AsAction()));
+                actions.Add(new KeyValuePair<string, ActionReturner>(Action.Method, Action.AsAction()));
             return new UserEndpoint(Id, Route, actions);
         }
     }

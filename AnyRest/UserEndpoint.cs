@@ -6,18 +6,18 @@ namespace AnyRest
     {
         public string Id;
         public string RouteSpec;
-        public Dictionary<string, IActionReturner> VerbActions;
+        public Dictionary<string, ActionReturner> VerbActions;
 
-        public UserEndpoint(string id, string routeSpec, IEnumerable<KeyValuePair<string, IActionReturner>> verbActions)
+        public UserEndpoint(string id, string routeSpec, IEnumerable<KeyValuePair<string, ActionReturner>> verbActions)
         {
             Id = id;
             RouteSpec = routeSpec;
-            VerbActions = new Dictionary<string, IActionReturner>(verbActions);
+            VerbActions = new Dictionary<string, ActionReturner>(verbActions);
         }
 
-        public IActionReturner GetAction(string verb)
+        public ActionReturner GetAction(string verb)
         {
-            IActionReturner action;
+            ActionReturner action;
             if (VerbActions.TryGetValue(verb, out action))
                 return action;
             else
