@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AnyRest
 {
@@ -95,15 +92,6 @@ namespace AnyRest
                 response.Headers.Add("Content-Disposition", ContentDisposition);
             return new FileStreamResult(commandOutput, ContentType);
         }
-    }
-
-    class Action
-    {
-        public string HttpMethod;
-        public string CommandFile;
-        public string CommandArguments;
-
-        public ActionReturner actionReturner;
     }
 
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,13 +13,9 @@ namespace AnyRest
     {
         public override ValueTask<RouteValueDictionary> TransformAsync(HttpContext httpContext, RouteValueDictionary values)
         {
-            //if (values["trailing_data"] == null)
-            {
-                values["controller"] = "DynamicEndpoint";
-                values["action"] = "MethodHandler";
-                //values["action"] = httpContext.Request.Method;
-                values["endpointSpecification"] = State;
-            }
+            values["controller"] = "DynamicEndpoint";
+            values["action"] = "MethodHandler";
+            values["endpointSpecification"] = State;
             return new ValueTask<RouteValueDictionary>(values);
         }
     }
@@ -32,8 +27,6 @@ namespace AnyRest
             services.AddMvc().AddXmlSerializerFormatters();
 
             services.AddLogging(c => c.ClearProviders());
-
-            //services.AddTransient<TranslationTransformer>();
 
             services.AddSwaggerGen(/*c =>
             {
@@ -81,7 +74,6 @@ namespace AnyRest
             {
                 foreach (UserEndpoint endpointSpecification in userEndpoints)
                 {
-                    //endpoints.MapDynamicControllerRoute<TranslationTransformer>(endpointSpecification.URL, endpointSpecification);
                     endpoints.MapControllerRoute(endpointSpecification.Id, endpointSpecification.RouteSpec, defaults: new
                     {
                         controller = "DynamicEndpoint",

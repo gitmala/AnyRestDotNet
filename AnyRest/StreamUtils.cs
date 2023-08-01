@@ -7,9 +7,7 @@ namespace AnyRest
     {
         const int bufferSize = 4096;
         public static void CopyStream(Stream inStream, Stream outStream)
-        {
-            //inStream.CopyToAsync(outStream).Wait();
-            
+        {   
             var buffer = new byte[bufferSize];
             var read = inStream.Read(buffer, 0, bufferSize);
             while (read != 0)
