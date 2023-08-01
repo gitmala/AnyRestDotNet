@@ -68,17 +68,17 @@ namespace AnyRest
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "test");
             });
 
-            var userEndpoints = (UserEndpoints)app.ApplicationServices.GetService(typeof(UserEndpoints));
+            var userEndpoints = (Endpoints)app.ApplicationServices.GetService(typeof(Endpoints));
 
             app.UseEndpoints(endpoints =>
             {
-                foreach (UserEndpoint endpointSpecification in userEndpoints)
+                foreach (Endpoint endpointSpecification in userEndpoints)
                 {
                     endpoints.MapControllerRoute(endpointSpecification.Id, endpointSpecification.RouteSpec, defaults: new
                     {
                         controller = "DynamicEndpoint",
                         action = "MethodHandler",
-                        endpointSpecification = (UserEndpoint)endpointSpecification
+                        endpointSpecification = (Endpoint)endpointSpecification
                     });
                 }
 

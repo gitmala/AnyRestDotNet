@@ -24,14 +24,14 @@ namespace AnyRest
         }
     }
 
-    public abstract class ActionReturner
+    public abstract class Action
     {
         protected string CommandLine;
         public string ContentType;
         protected string ContentDisposition = null;
         QueryParmConfig[] QueryParmConfigs;
 
-        public ActionReturner(string commandLine, string contentType, QueryParmConfig[] queryParmConfigs, string contentDisposition)
+        public Action(string commandLine, string contentType, QueryParmConfig[] queryParmConfigs, string contentDisposition)
         {
             CommandLine = commandLine;
             if (string.IsNullOrEmpty(contentType))
@@ -63,9 +63,9 @@ namespace AnyRest
         public abstract IActionResult ReturnFromCommand(HttpEnvironment httpEnvironment, HttpResponse response);
     }
 
-    class CommandResultReturner : ActionReturner
+    class CommandAction : Action
     {
-        public CommandResultReturner(string commandLine, QueryParmConfig[] queryParmConfig) : base(commandLine, null, queryParmConfig, null)
+        public CommandAction(string commandLine, QueryParmConfig[] queryParmConfig) : base(commandLine, null, queryParmConfig, null)
         {
         }
         public override IActionResult ReturnFromCommand(HttpEnvironment httpEnvironment, HttpResponse response)
@@ -75,13 +75,13 @@ namespace AnyRest
         }
     }
 
-    class FileStreamReturner : ActionReturner
+    class StreamAction : Action
     {
-        public FileStreamReturner(string commandLine, QueryParmConfig[] queryParmConfig, string contentType) : base(commandLine, contentType, queryParmConfig, null)
+        public StreamAction(string commandLine, QueryParmConfig[] queryParmConfig, string contentType) : base(commandLine, contentType, queryParmConfig, null)
         {
         }
 
-        public FileStreamReturner(string commandLine, string contentType, QueryParmConfig[] queryParmConfig, string contentDisposition) : base(commandLine, contentType, queryParmConfig, contentDisposition)
+        public StreamAction(string commandLine, string contentType, QueryParmConfig[] queryParmConfig, string contentDisposition) : base(commandLine, contentType, queryParmConfig, contentDisposition)
         {
         }
 

@@ -12,7 +12,7 @@ namespace AnyRest
         {
             var userEndpoints = FileConfig.LoadFromFile("config.json");
             var builder = WebHost.CreateDefaultBuilder()
-                .ConfigureServices(x => x.AddSingleton<UserEndpoints>(userEndpoints))
+                .ConfigureServices(x => x.AddSingleton<Endpoints>(userEndpoints))
                 .ConfigureKestrel(options => options.Limits.MaxRequestBodySize = null)
                 .ConfigureKestrel(options => options.ListenAnyIP(3354))
                 .UseStartup<Startup>();

@@ -9,15 +9,15 @@ namespace AnyRest
     {
         public IActionResult MethodHandler()
         {
-            var userEndpoint = (UserEndpoint)this.RouteData.Values["endpointSpecification"];
-            var verbAction = userEndpoint.GetAction(Request.Method);
-            if (verbAction == null)
+            var endpoint = (Endpoint)this.RouteData.Values["endpointSpecification"];
+            var action = endpoint.GetAction(Request.Method);
+            if (action == null)
                 return NotFound($"No action defined for {Request.Method}");
             else
             {
                 try
                 {
-                    var httpEnvironment = new HttpEnvironment(verbAction.ValidateQueryParms(Request), Request.Method, Request.Path, verbAction.ContentType, Request.Body);
+                    var httpEnvironment = new HttpEnvironment(action.ValidateQueryParms(Request), Request.Method, Request.Path, action.ContentType, Request.Body);
                     try
                     {
                         foreach (var routeValue in Request.RouteValues)
@@ -28,7 +28,7 @@ namespace AnyRest
                                     httpEnvironment.RouteValues.Add(new KeyValuePair<string, string>(routeValue.Key, (string)routeValue.Value));
                             }
                         }
-                        return verbAction.ReturnFromCommand(httpEnvironment, Response);
+                        return action.ReturnFromCommand(httpEnvironment, Response);
                     }
                     catch (Exception ex)
                     {

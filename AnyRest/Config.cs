@@ -21,13 +21,13 @@ namespace AnyRest
         public string ContentType;
         public string ReturnOnOk;
 
-        public ActionReturner AsAction()
+        public Action AsAction()
         {
             switch (Type) {
                 case "CommandResult":
-                    return new CommandResultReturner(CommandLine, Parms);
+                    return new CommandAction(CommandLine, Parms);
                 case "Stream":
-                    return new FileStreamReturner(CommandLine, Parms, ContentType);
+                    return new StreamAction(CommandLine, Parms, ContentType);
                 default:
                     throw new ApplicationException("Unknown actiontype");
             }
@@ -40,26 +40,26 @@ namespace AnyRest
         public string Route;
         public ActionConfig[] Actions;
 
-        public UserEndpoint AsEndpoint()
+        public Endpoint AsEndpoint()
         {
-            var actions = new List<KeyValuePair<string, ActionReturner>>();
+            var actions = new List<KeyValuePair<string, Action>>();
             foreach (var Action in Actions)
-                actions.Add(new KeyValuePair<string, ActionReturner>(Action.Method, Action.AsAction()));
-            return new UserEndpoint(Id, Route, actions);
+                actions.Add(new KeyValuePair<string, Action>(Action.Method, Action.AsAction()));
+            return new Endpoint(Id, Route, actions);
         }
     }
 
     public class FileConfig
     {
         public EndpointConfig[] Endpoints;
-        public UserEndpoints AsEndpoints()
+        public Endpoints AsEndpoints()
         {
-            var endpoints = new UserEndpoints();
+            var endpoints = new Endpoints();
             foreach (var Endpoint in Endpoints)
                 endpoints.Add(Endpoint.AsEndpoint());
             return endpoints;
         }
-        public static UserEndpoints LoadFromFile(string fileName)
+        public static Endpoints LoadFromFile(string fileName)
         {
             var gen = new Newtonsoft.Json.Schema.Generation.JSchemaGenerator();
             var schema = gen.Generate(typeof(FileConfig));
