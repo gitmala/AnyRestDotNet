@@ -9,6 +9,19 @@
 			]
 		},
 
+		{ "Id": "MyEndPoint1.1", "Route": "api1/file2/{filename}", "Actions":
+			[
+				//Test: Output a file (name is qparm)
+				{ "Method": "GET", "Type": "CommandResult", "CommandLine": "type %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ] }
+			]
+		},
+
+		{ "Id": "Env", "Route": "api1/env/{foo}/test/{bar}", "Actions":
+			[
+				{ "Method": "GET", "Type": "Stream", "CommandLine": "set AnyREST", "Parms": [ { "Name":"foo", "Type":"string"}, { "Name":"bar", "Type":"string"} ] , "ContentType": "text/plaintext"}
+			]
+		},
+
 		{ "Id": "MyEndPoint2", "Route": "api2/file", "Actions":
 			[
 				//Test: Output a file (name is qparm)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -38,7 +39,7 @@ namespace AnyRest
             }
         }
 
-        static Process StartProcess(string commandLine, HttpRequest request)
+        static Process StartProcess(string commandLine, HttpEnvironment httpEnvironment)
         {
             Process p = new Process();
 
@@ -50,21 +51,21 @@ namespace AnyRest
             p.StartInfo.FileName = "cmd";
             p.StartInfo.Arguments = $"/c {commandLine}";
 
-            p.StartInfo.Environment.Add($"AnyRESTHttpMethod", request.Method);
-            p.StartInfo.Environment.Add($"AnyRESTPath", request.Path);
+            p.StartInfo.Environment.Add($"AnyRESTHttpMethod", httpEnvironment.RequestMethod);
+            p.StartInfo.Environment.Add($"AnyRESTPath", httpEnvironment.RequestPath);
+            p.StartInfo.Environment.Add($"AnyRESTContentType", httpEnvironment.ContentType);
 
-            foreach (var key in request.Query.Keys)
-                p.StartInfo.Environment.Add($"AnyRESTQueryParm_{key}", request.Query[key]);
+            foreach (var queryParm in httpEnvironment.QueryParms)
+                p.StartInfo.Environment.Add($"AnyRESTQueryParm_{queryParm.Key}", queryParm.Value);
 
-            foreach (var routeValue in request.RouteValues)
+            foreach (var routeValue in httpEnvironment.RouteValues)
             {
-                if (routeValue.Value != null && routeValue.Value.GetType() == typeof(string))
-                    p.StartInfo.Environment.Add($"AnyRESTRouteParm_{routeValue.Key}", (string)routeValue.Value);
+                p.StartInfo.Environment.Add($"AnyRESTRouteParm_{routeValue.Key}", routeValue.Value);
             }
 
             if (p.Start())
             {
-                Task.Run(() => StreamBodyToStdInput(request.Body, p.StandardInput.BaseStream));
+                Task.Run(() => StreamBodyToStdInput(httpEnvironment.RequestBody, p.StandardInput.BaseStream));
                 return p;
             }
             else
@@ -78,9 +79,9 @@ namespace AnyRest
             p.Dispose();
         }
 
-        public static CommandResult ExecuteCommand(string commandLine, HttpRequest request, int timeOut = -1)
+        public static CommandResult ExecuteCommand(string commandLine, HttpEnvironment httpEnvironment, int timeOut = -1)
         {
-            using (Process p = StartProcess(commandLine, request))
+            using (Process p = StartProcess(commandLine, httpEnvironment))
             {
                 var stdOutputTask = p.StandardOutput.ReadToEndAsync();
                 var stdErrorTask = p.StandardError.ReadToEndAsync();
@@ -99,9 +100,9 @@ namespace AnyRest
             }
         }
 
-        public static Stream ExecuteDataCommand(string commandLine, HttpRequest request, int timeOut = -1)
+        public static Stream ExecuteDataCommand(string commandLine, HttpEnvironment httpEnvironment, int timeOut = -1)
         {
-            Process p = StartProcess(commandLine, request);
+            Process p = StartProcess(commandLine, httpEnvironment);
             Task.Run(() => WaitForProcessExit(p, timeOut));
             return p.StandardOutput.BaseStream;
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 
 namespace AnyRest
 {
@@ -16,11 +17,27 @@ namespace AnyRest
             {
                 try
                 {
-                    return verbAction.ReturnFromCommand(Request, Response);
+                    var httpEnvironment = new HttpEnvironment(verbAction.ValidateQueryParms(Request), Request.Method, Request.Path, verbAction.ContentType, Request.Body);
+                    try
+                    {
+                        foreach (var routeValue in Request.RouteValues)
+                        {
+                            if (routeValue.Value != null && routeValue.Value.GetType() == typeof(string))
+                            {
+                                if (routeValue.Key != "controller" && routeValue.Key != "action")
+                                    httpEnvironment.RouteValues.Add(new KeyValuePair<string, string>(routeValue.Key, (string)routeValue.Value));
+                            }
+                        }
+                        return verbAction.ReturnFromCommand(httpEnvironment, Response);
+                    }
+                    catch (Exception ex)
+                    {
+                        return Problem();
+                    }
                 }
-                catch (Exception ex)
+                catch (ApplicationException ex)
                 {
-                    return Problem();
+                    return BadRequest(ex.Message);
                 }
             }
         }
