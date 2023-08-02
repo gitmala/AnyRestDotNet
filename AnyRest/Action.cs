@@ -72,7 +72,7 @@ namespace AnyRest
             return actionEnvironment;
         }
 
-        public abstract IActionResult Run(ActionEnvironment httpEnvironment, HttpResponse response);
+        public abstract IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response);
     }
 
     class CommandAction : Action
@@ -80,9 +80,9 @@ namespace AnyRest
         public CommandAction(string commandLine, QueryParmConfig[] queryParmConfig) : base(commandLine, null, queryParmConfig)
         {
         }
-        public override IActionResult Run(ActionEnvironment httpEnvironment, HttpResponse response)
+        public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
         {
-            var result = ShellExecuter.GetCommandResult(CommandLine, httpEnvironment);
+            var result = ShellExecuter.GetCommandResult(CommandLine, actionEnvironment);
             return new OkObjectResult(result);
         }
     }
@@ -95,9 +95,9 @@ namespace AnyRest
             DownloadFileName = downloadFileName;
         }
 
-        public override IActionResult Run(ActionEnvironment httpEnvironment, HttpResponse response)
+        public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
         {
-            var commandOutput = ShellExecuter.GetStreamResult(CommandLine, httpEnvironment);
+            var commandOutput = ShellExecuter.GetStreamResult(CommandLine, actionEnvironment);
             if (DownloadFileName != null)
                 response.Headers.Add("Content-Disposition", $"attachment; filename=\"{DownloadFileName}\"");
             else
