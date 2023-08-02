@@ -19,21 +19,15 @@ namespace AnyRest
             {
                 bodyStream.CopyToAsync(stdIn).Wait();
             }
-            catch (Exception ex)
-            {
-                var type = ex.GetType();
-                var msg = ex.Message;
-            }
+            catch (Exception)
+            {}
 
             try
             {
                 stdIn.Close();
             }
-            catch (Exception ex)
-            {
-                var type = ex.GetType();
-                var msg = ex.Message;
-            }
+            catch (Exception)
+            {}
         }
 
         static Process StartProcess(string commandLine, ActionEnvironment actionEnvironment)
@@ -68,7 +62,7 @@ namespace AnyRest
                     return p;
                 }
                 else
-                    throw new ApplicationException("startong process returned null");
+                    throw new ApplicationException("starting process returned null");
             }
             catch (Exception ex)
             {
