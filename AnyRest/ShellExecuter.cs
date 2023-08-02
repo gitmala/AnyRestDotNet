@@ -60,13 +60,20 @@ namespace AnyRest
                 p.StartInfo.Environment.Add($"AnyRESTRouteParm_{routeValue.Key}", routeValue.Value);
             }
 
-            if (p.Start())
+            try
             {
-                Task.Run(() => StreamBodyToStdInput(actionEnvironment.RequestBody, p.StandardInput.BaseStream));
-                return p;
+                if (p.Start())
+                {
+                    Task.Run(() => StreamBodyToStdInput(actionEnvironment.RequestBody, p.StandardInput.BaseStream));
+                    return p;
+                }
+                else
+                    throw new ApplicationException("startong process returned null");
             }
-            else
-                return null; //Throw instead
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Unable to start process", ex);
+            }
         }
 
         public static void WaitForProcessExit(Process p, int timeOut)

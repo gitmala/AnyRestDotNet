@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 
 namespace AnyRest
 {
@@ -9,15 +10,14 @@ namespace AnyRest
         public IActionResult MethodHandler()
         {
             var endpoint = (Endpoint)this.RouteData.Values["endpointSpecification"];
-            Request.RouteValues.Remove("endpointSpecification");
 
-            var action = endpoint.GetAction(Request.Method);
-            if (action == null)
-                return NotFound($"No action defined for {Request.Method}");
-            else
+            Request.RouteValues.Remove("endpointSpecification");
+            Request.RouteValues.Remove("action");
+            Request.RouteValues.Remove("controller");
+
+            try
             {
-                Request.RouteValues.Remove("action");
-                Request.RouteValues.Remove("controller");
+                var action = endpoint.GetAction(Request.Method);
                 try
                 {
                     var actionEnvironment = action.MakeActionEnvironment(Request);
@@ -27,7 +27,7 @@ namespace AnyRest
                     }
                     catch (Exception ex)
                     {
-                        return Problem();
+                        return Problem(ex.Message);
                     }
                 }
                 catch (ApplicationException ex)
@@ -35,6 +35,11 @@ namespace AnyRest
                     return BadRequest(ex.Message);
                 }
             }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"No action of type {Request.Method} for endpoint {endpoint.Id}");
+            }
+
         }
     }
 

@@ -6,7 +6,7 @@ namespace AnyRest
     {
         public string Id;
         public string RouteSpec;
-        public Dictionary<string, Action> VerbActions;
+        Dictionary<string, Action> VerbActions;
 
         public Endpoint(string id, string routeSpec, IEnumerable<KeyValuePair<string, Action>> verbActions)
         {
@@ -17,11 +17,7 @@ namespace AnyRest
 
         public Action GetAction(string verb)
         {
-            Action action;
-            if (VerbActions.TryGetValue(verb, out action))
-                return action;
-            else
-                return null;
+            return VerbActions[verb];
         }
     }
 
