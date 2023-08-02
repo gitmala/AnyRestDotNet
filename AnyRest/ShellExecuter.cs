@@ -11,7 +11,7 @@ namespace AnyRest
         public string stdOutput { get; set; }
         public string stdError { get; set; }
     }
-    class CommandExecuter
+    class ShellExecuter
     {
         static void StreamBodyToStdInput(Stream bodyStream, Stream stdIn)
         {
@@ -76,7 +76,7 @@ namespace AnyRest
             p.Dispose();
         }
 
-        public static CommandResult ExecuteCommand(string commandLine, HttpEnvironment httpEnvironment, int timeOut = -1)
+        public static CommandResult GetCommandResult(string commandLine, HttpEnvironment httpEnvironment, int timeOut = -1)
         {
             using (Process p = StartProcess(commandLine, httpEnvironment))
             {
@@ -97,7 +97,7 @@ namespace AnyRest
             }
         }
 
-        public static Stream ExecuteDataCommand(string commandLine, HttpEnvironment httpEnvironment, int timeOut = -1)
+        public static Stream GetStreamResult(string commandLine, HttpEnvironment httpEnvironment, int timeOut = -1)
         {
             Process p = StartProcess(commandLine, httpEnvironment);
             Task.Run(() => WaitForProcessExit(p, timeOut));

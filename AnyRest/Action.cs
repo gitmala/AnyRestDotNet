@@ -60,7 +60,7 @@ namespace AnyRest
             return queryParms;
         }
 
-        public abstract IActionResult ReturnFromCommand(HttpEnvironment httpEnvironment, HttpResponse response);
+        public abstract IActionResult Run(HttpEnvironment httpEnvironment, HttpResponse response);
     }
 
     class CommandAction : Action
@@ -68,9 +68,9 @@ namespace AnyRest
         public CommandAction(string commandLine, QueryParmConfig[] queryParmConfig) : base(commandLine, null, queryParmConfig, null)
         {
         }
-        public override IActionResult ReturnFromCommand(HttpEnvironment httpEnvironment, HttpResponse response)
+        public override IActionResult Run(HttpEnvironment httpEnvironment, HttpResponse response)
         {
-            var result = CommandExecuter.ExecuteCommand(CommandLine, httpEnvironment);
+            var result = ShellExecuter.GetCommandResult(CommandLine, httpEnvironment);
             return new OkObjectResult(result);
         }
     }
@@ -85,9 +85,9 @@ namespace AnyRest
         {
         }
 
-        public override IActionResult ReturnFromCommand(HttpEnvironment httpEnvironment, HttpResponse response)
+        public override IActionResult Run(HttpEnvironment httpEnvironment, HttpResponse response)
         {
-            var commandOutput = CommandExecuter.ExecuteDataCommand(CommandLine, httpEnvironment);
+            var commandOutput = ShellExecuter.GetStreamResult(CommandLine, httpEnvironment);
             if (ContentDisposition != null)
                 response.Headers.Add("Content-Disposition", ContentDisposition);
             return new FileStreamResult(commandOutput, ContentType);

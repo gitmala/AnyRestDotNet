@@ -28,7 +28,7 @@ namespace AnyRest
                                     httpEnvironment.RouteValues.Add(new KeyValuePair<string, string>(routeValue.Key, (string)routeValue.Value));
                             }
                         }
-                        return action.ReturnFromCommand(httpEnvironment, Response);
+                        return action.Run(httpEnvironment, Response);
                     }
                     catch (Exception ex)
                     {
