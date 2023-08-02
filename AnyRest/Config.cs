@@ -27,7 +27,7 @@ namespace AnyRest
                 case "CommandResult":
                     return new CommandAction(CommandLine, Parms);
                 case "Stream":
-                    return new StreamAction(CommandLine, Parms, ContentType);
+                    return new StreamAction(CommandLine, Parms, ContentType, null);
                 default:
                     throw new ApplicationException("Unknown actiontype");
             }

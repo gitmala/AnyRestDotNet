@@ -5,23 +5,33 @@ using System.Collections.Generic;
 
 namespace AnyRest
 {
-    public class HttpEnvironment
+    public class ActionEnvironment
     {
-        public IEnumerable<KeyValuePair<string, string>> QueryParms = null;
+        public List<KeyValuePair<string, string>> QueryParms = new List<KeyValuePair<string, string>>();
         public List<KeyValuePair<string, string>> RouteValues = new List<KeyValuePair<string, string>>();
         public string RequestMethod = null;
         public string RequestPath = null;
         public string ContentType = null;
         public System.IO.Stream RequestBody = null;
 
-        public HttpEnvironment(IEnumerable<KeyValuePair<string, string>> queryParms, string requestMethod, string requestPath, string contentType, System.IO.Stream requestBody)
+        public ActionEnvironment(string requestMethod, string requestPath, string contentType, System.IO.Stream requestBody)
         {
-            QueryParms = queryParms;
             RequestMethod = requestMethod;
             RequestPath = requestPath;
             RequestBody = requestBody;
             ContentType = contentType;
         }
+
+        public void AddQueryParm(string name, string value)
+        {
+            QueryParms.Add(new KeyValuePair<string, string>(name, value));
+        }
+
+        public void AddRouteParm(string name, string value)
+        {
+            RouteValues.Add(new KeyValuePair<string, string>(name, value));
+        }
+
     }
 
     public abstract class Action
@@ -31,7 +41,7 @@ namespace AnyRest
         protected string ContentDisposition = null;
         QueryParmConfig[] QueryParmConfigs;
 
-        public Action(string commandLine, string contentType, QueryParmConfig[] queryParmConfigs, string contentDisposition)
+        protected Action(string commandLine, string contentType, QueryParmConfig[] queryParmSpec, string contentDisposition)
         {
             CommandLine = commandLine;
             if (string.IsNullOrEmpty(contentType))
@@ -39,28 +49,32 @@ namespace AnyRest
             else
                 ContentType = contentType;
 
-            QueryParmConfigs = queryParmConfigs;
+            QueryParmConfigs = queryParmSpec;
             ContentDisposition = contentDisposition;
         }
 
-        public IEnumerable<KeyValuePair<string, string>> ValidateQueryParms(HttpRequest request)
+        public ActionEnvironment MakeActionEnvironment(HttpRequest request)
         {
-            var queryParms = new List<KeyValuePair<string, string>>();
+            var actionEnvironment = new ActionEnvironment(request.Method, request.Path, ContentType, request.Body);
 
             foreach (var queryParmConfig in QueryParmConfigs)
             {
                 if (!request.Query.Keys.Contains(queryParmConfig.Name) && !queryParmConfig.Optional)
-                {
                     throw new ApplicationException($"Missing query parameter {queryParmConfig.Name}");
-                }
                 else
-                    queryParms.Add(new KeyValuePair<string, string>(queryParmConfig.Name, request.Query[queryParmConfig.Name]));
+                    actionEnvironment.AddQueryParm(queryParmConfig.Name, request.Query[queryParmConfig.Name]);
             }
 
-            return queryParms;
+            foreach (var routeValue in request.RouteValues)
+            {
+                if (routeValue.Value != null && routeValue.Value.GetType() == typeof(string))
+                    actionEnvironment.AddRouteParm(routeValue.Key, (string)routeValue.Value);
+            }
+
+            return actionEnvironment;
         }
 
-        public abstract IActionResult Run(HttpEnvironment httpEnvironment, HttpResponse response);
+        public abstract IActionResult Run(ActionEnvironment httpEnvironment, HttpResponse response);
     }
 
     class CommandAction : Action
@@ -68,7 +82,7 @@ namespace AnyRest
         public CommandAction(string commandLine, QueryParmConfig[] queryParmConfig) : base(commandLine, null, queryParmConfig, null)
         {
         }
-        public override IActionResult Run(HttpEnvironment httpEnvironment, HttpResponse response)
+        public override IActionResult Run(ActionEnvironment httpEnvironment, HttpResponse response)
         {
             var result = ShellExecuter.GetCommandResult(CommandLine, httpEnvironment);
             return new OkObjectResult(result);
@@ -77,15 +91,11 @@ namespace AnyRest
 
     class StreamAction : Action
     {
-        public StreamAction(string commandLine, QueryParmConfig[] queryParmConfig, string contentType) : base(commandLine, contentType, queryParmConfig, null)
+        public StreamAction(string commandLine, QueryParmConfig[] queryParmConfig, string contentType, string contentDisposition) : base(commandLine, contentType, queryParmConfig, contentDisposition)
         {
         }
 
-        public StreamAction(string commandLine, string contentType, QueryParmConfig[] queryParmConfig, string contentDisposition) : base(commandLine, contentType, queryParmConfig, contentDisposition)
-        {
-        }
-
-        public override IActionResult Run(HttpEnvironment httpEnvironment, HttpResponse response)
+        public override IActionResult Run(ActionEnvironment httpEnvironment, HttpResponse response)
         {
             var commandOutput = ShellExecuter.GetStreamResult(CommandLine, httpEnvironment);
             if (ContentDisposition != null)
