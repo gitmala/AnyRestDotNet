@@ -18,7 +18,7 @@
 
 		{ "Id": "Env", "Route": "api1/env/{foo}/test/{bar}", "Actions":
 			[
-				{ "Method": "GET", "Type": "Stream", "CommandLine": "set AnyREST", "Parms": [ { "Name":"foo", "Type":"string"}, { "Name":"bar", "Type":"string"} ] , "ContentType": "text/plaintext"}
+				{ "Method": "GET", "Type": "Stream", "CommandLine": "set AnyREST", "Parms": [ { "Name":"foo", "Type":"string"}, { "Name":"bar", "Type":"string"} ] , "ContentType": "text/plaintext", "DownloadFileName": "filename3.jpg"}
 			]
 		},
 

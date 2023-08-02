@@ -37,11 +37,10 @@ namespace AnyRest
     public abstract class Action
     {
         protected string CommandLine;
-        public string ContentType;
-        protected string ContentDisposition = null;
+        protected string ContentType;
         QueryParmConfig[] QueryParmConfigs;
 
-        protected Action(string commandLine, string contentType, QueryParmConfig[] queryParmSpec, string contentDisposition)
+        protected Action(string commandLine, string contentType, QueryParmConfig[] queryParmSpec)
         {
             CommandLine = commandLine;
             if (string.IsNullOrEmpty(contentType))
@@ -50,7 +49,6 @@ namespace AnyRest
                 ContentType = contentType;
 
             QueryParmConfigs = queryParmSpec;
-            ContentDisposition = contentDisposition;
         }
 
         public ActionEnvironment MakeActionEnvironment(HttpRequest request)
@@ -79,7 +77,7 @@ namespace AnyRest
 
     class CommandAction : Action
     {
-        public CommandAction(string commandLine, QueryParmConfig[] queryParmConfig) : base(commandLine, null, queryParmConfig, null)
+        public CommandAction(string commandLine, QueryParmConfig[] queryParmConfig) : base(commandLine, null, queryParmConfig)
         {
         }
         public override IActionResult Run(ActionEnvironment httpEnvironment, HttpResponse response)
@@ -91,15 +89,19 @@ namespace AnyRest
 
     class StreamAction : Action
     {
-        public StreamAction(string commandLine, QueryParmConfig[] queryParmConfig, string contentType, string contentDisposition) : base(commandLine, contentType, queryParmConfig, contentDisposition)
+        protected string DownloadFileName = null;
+        public StreamAction(string commandLine, QueryParmConfig[] queryParmConfig, string contentType, string downloadFileName) : base(commandLine, contentType, queryParmConfig)
         {
+            DownloadFileName = downloadFileName;
         }
 
         public override IActionResult Run(ActionEnvironment httpEnvironment, HttpResponse response)
         {
             var commandOutput = ShellExecuter.GetStreamResult(CommandLine, httpEnvironment);
-            if (ContentDisposition != null)
-                response.Headers.Add("Content-Disposition", ContentDisposition);
+            if (DownloadFileName != null)
+                response.Headers.Add("Content-Disposition", $"attachment; filename=\"{DownloadFileName}\"");
+            else
+                response.Headers.Add("Content-Disposition", "inline");
             return new FileStreamResult(commandOutput, ContentType);
         }
     }

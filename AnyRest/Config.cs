@@ -19,6 +19,7 @@ namespace AnyRest
         public string CommandLine;
         public QueryParmConfig[] Parms;
         public string ContentType;
+        public string DownloadFileName;
         public string ReturnOnOk;
 
         public Action AsAction()
@@ -27,7 +28,7 @@ namespace AnyRest
                 case "CommandResult":
                     return new CommandAction(CommandLine, Parms);
                 case "Stream":
-                    return new StreamAction(CommandLine, Parms, ContentType, null);
+                    return new StreamAction(CommandLine, Parms, ContentType, DownloadFileName);
                 default:
                     throw new ApplicationException("Unknown actiontype");
             }
