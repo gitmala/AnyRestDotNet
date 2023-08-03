@@ -44,7 +44,8 @@ namespace AnyRest
 
             p.StartInfo.Environment.Add($"AnyRESTHttpMethod", actionEnvironment.RequestMethod);
             p.StartInfo.Environment.Add($"AnyRESTPath", actionEnvironment.RequestPath);
-            p.StartInfo.Environment.Add($"AnyRESTContentType", actionEnvironment.ContentType);
+            if (!String.IsNullOrEmpty(actionEnvironment.ContentType))
+                p.StartInfo.Environment.Add($"AnyRESTContentType", actionEnvironment.ContentType);
 
             foreach (var queryParm in actionEnvironment.QueryParms)
                 p.StartInfo.Environment.Add($"AnyRESTQueryParm_{queryParm.Key}", queryParm.Value);

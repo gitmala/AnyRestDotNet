@@ -37,18 +37,14 @@ namespace AnyRest
     public abstract class Action
     {
         protected string CommandLine;
-        protected string ContentType;
         QueryParmConfig[] QueryParmConfigs;
+        protected string ContentType = null;
 
         protected Action(string commandLine, string contentType, QueryParmConfig[] queryParmSpec)
         {
             CommandLine = commandLine;
-            if (string.IsNullOrEmpty(contentType))
-                ContentType = "application/octet-stream";
-            else
-                ContentType = contentType;
-
             QueryParmConfigs = queryParmSpec;
+            //ContentType is optional for an actiontype, and is therefore handled by constructor of derived class
         }
 
         public ActionEnvironment MakeActionEnvironment(HttpRequest request)
@@ -92,6 +88,10 @@ namespace AnyRest
         protected string DownloadFileName = null;
         public StreamAction(string commandLine, QueryParmConfig[] queryParmConfig, string contentType, string downloadFileName) : base(commandLine, contentType, queryParmConfig)
         {
+            if (string.IsNullOrEmpty(contentType))
+                ContentType = "application/octet-stream";
+            else
+                ContentType = contentType;
             DownloadFileName = downloadFileName;
         }
 
