@@ -1,0 +1,138 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+
+  "definitions": {
+
+    "HTTPMethod": {
+      "type": "string",
+      "enum":  [ "get", "put", "post", "update", "delete" ]
+    },
+
+    "ParameterType": {
+      "type": "string",
+      "enum":  [ "string", "int", "double", "bool" ]
+    },
+
+    "QueryParameter" : {
+      "type": "object",
+      "properties": {
+        "Name": { "type": "string" },
+        "Type": { "$ref": "#/definitions/ParameterType" },
+        "Optional": { "type": "boolean" }
+        },
+        "required": ["Name"]
+    }
+  },
+
+  "type": "object",
+  "properties": {
+
+    "test": {"$ref": "#/definitions/QueryParameter"},
+
+    "EndPointDefaults": {
+      "type": "object",
+      "properties": {
+        "RoutePrefix": {
+          "type": "string",
+          "default": ""
+        },
+        "Route": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": []
+    },
+
+    "ActionDefaults": {
+      "type": "object",
+      "properties": {
+        "Shell": {
+          "type": "string"
+        },
+        "ArgumentsPrefix": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": []
+    },
+
+    "QueryparmDefaults": {
+      "type": "object",
+      "properties": {
+        "Type": { "$ref": "#/definitions/ParameterType", "default": "string" },
+        "Optional": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": []
+    },
+
+    "Endpoints": {
+      "type": "array",
+      "items": {
+          "type": "object",
+          "properties": {
+            "RoutePrefix": {
+              "type": "string"
+            },
+            "Id": {
+              "type": "string"
+            },
+            "Route": {
+              "type": "string"
+            },
+            "Actions": {
+              "type": "array",
+              "items":
+                {
+                  "type": "object",
+                  "properties": {
+                    "Method": {
+                      "type": "string"
+                    },
+                    "Type": {
+                      "type": "string"
+                    },
+                    "Shell": {
+                      "type": "string"
+                    },
+                    "ArgumentsPrefix": {
+                      "type": "string"
+                    },
+                    "CommandLine": {
+                      "type": "string"
+                    },
+                    "Parms": {
+                      "type": "array",
+                      "items": { "$ref": "#/definitions/QueryParameter" }
+                    },
+                    "ContentType": {
+                      "type": "string"
+                    },
+                    "DownloadFileName": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Method",
+                    "CommandLine"
+                  ]
+                }
+            }
+          },
+          "required": [
+            "Id"
+          ]
+        }
+    }
+  },
+  "required": [
+    "EndPointDefaults",
+    "ActionDefaults",
+    "QueryparmDefaults",
+    "Endpoints"
+  ]
+}
