@@ -5,7 +5,7 @@
 
     "HTTPMethod": {
       "type": "string",
-      "enum":  [ "get", "put", "post", "update", "delete" ]
+      "enum":  [ "GET", "PUT", "POST", "UPDATE", "DELETE" ]
     },
 
     "ParameterType": {
@@ -27,8 +27,6 @@
   "type": "object",
   "properties": {
 
-    "test": {"$ref": "#/definitions/QueryParameter"},
-
     "EndPointDefaults": {
       "type": "object",
       "properties": {
@@ -47,12 +45,24 @@
     "ActionDefaults": {
       "type": "object",
       "properties": {
+        "Type":  {
+          "type": "string",
+          "default": "stream"
+        },
         "Shell": {
           "type": "string"
         },
         "ArgumentsPrefix": {
           "type": "string",
           "default": ""
+        },
+        "CommandLine": {
+          "type": "string",
+          "default": ""
+        },
+        "ContentType": {
+          "type": "string",
+          "default": "application/octet-stream"
         }
       },
       "required": []
@@ -91,11 +101,10 @@
                   "type": "object",
                   "properties": {
                     "Method": {
-                      "type": "string"
+                      "$ref": "#/definitions/HTTPMethod", "default": "GET"
                     },
                     "Type": {
-                      "type": "string"
-                    },
+                      "type": "string" },
                     "Shell": {
                       "type": "string"
                     },
