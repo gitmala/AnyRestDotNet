@@ -21,6 +21,11 @@
         "Optional": { "type": "boolean" }
         },
         "required": ["Name"]
+    },
+
+    "ActionType":  {
+      "type": "string",
+      "enum":  [ "stream", "command" ]
     }
   },
 
@@ -104,7 +109,8 @@
                       "$ref": "#/definitions/HTTPMethod", "default": "GET"
                     },
                     "Type": {
-                      "type": "string" },
+                      "$ref": "#/definitions/ActionType", "default": "stream"
+                    },
                     "Shell": {
                       "type": "string"
                     },
@@ -142,6 +148,5 @@
     "EndPointDefaults",
     "ActionDefaults",
     "QueryparmDefaults",
-    "Endpoints"
   ]
 }
