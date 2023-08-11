@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json.Schema;
+using Newtonsoft.Json;
+using System;
+using System.IO;
 using System.Threading;
 
 namespace AnyRest
@@ -18,7 +21,9 @@ namespace AnyRest
                     Thread.Sleep(time);
             }
             else
-                Service.StartService();
+            {
+                Service.StartService(FileConfig.LoadFromFile("config.json"));
+            }
         }
     }
 }
