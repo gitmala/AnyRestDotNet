@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace AnyRest
 {
@@ -22,7 +23,16 @@ namespace AnyRest
             }
             else
             {
-                Service.StartService(FileConfig.LoadFromFile("config.json"));
+                var filename = "config.json";
+                Endpoints endpoints = FileConfig.LoadFromFile(filename);
+                Console.WriteLine($"Endpoints from file {filename}");
+                foreach (var endpoint in endpoints)
+                {
+                    Console.WriteLine("    " + endpoint.AsString());
+                }
+                Console.WriteLine("");
+                Console.WriteLine("Starting service");
+                Service.StartService(endpoints);
             }
         }
     }

@@ -19,6 +19,11 @@ namespace AnyRest
         {
             return VerbActions[verb];
         }
+
+        public string AsString()
+        {
+            return Id + ": " + RouteSpec;
+        }
     }
 
     public class Endpoints : List<Endpoint> { }
