@@ -5,6 +5,22 @@ using System.Collections.Generic;
 
 namespace AnyRest
 {
+    public class QueryParm
+    {
+        public string Name;
+        public string Type;
+        public bool Optional;
+
+        public QueryParm(string name, string type, bool optional)
+        {
+            Name = name;
+            Type = type;
+            Optional = optional;
+        }
+    }
+
+    public class QueryParms : List<QueryParm> { }
+
     public class ActionEnvironment
     {
         public List<KeyValuePair<string, string>> QueryParms = new List<KeyValuePair<string, string>>();
@@ -37,13 +53,13 @@ namespace AnyRest
     public abstract class Action
     {
         protected string CommandLine;
-        QueryParmConfig[] QueryParmConfigs;
+        QueryParms queryParms;
         protected string ContentType = null;
 
-        protected Action(string commandLine, string contentType, QueryParmConfig[] queryParmSpec)
+        protected Action(string commandLine, string contentType, QueryParms queryParms)
         {
             CommandLine = commandLine;
-            QueryParmConfigs = queryParmSpec;
+            this.queryParms = queryParms;
             //ContentType is optional for an actiontype, and is therefore handled by constructor of derived class
         }
 
@@ -51,7 +67,7 @@ namespace AnyRest
         {
             var actionEnvironment = new ActionEnvironment(request.Method, request.Path, ContentType, request.Body);
 
-            foreach (var queryParmConfig in QueryParmConfigs)
+            foreach (var queryParmConfig in queryParms)
             {
                 if (!request.Query.Keys.Contains(queryParmConfig.Name) && !queryParmConfig.Optional)
                     throw new ApplicationException($"Missing query parameter {queryParmConfig.Name}");
@@ -73,7 +89,7 @@ namespace AnyRest
 
     class CommandAction : Action
     {
-        public CommandAction(string commandLine, QueryParmConfig[] queryParmConfig) : base(commandLine, null, queryParmConfig)
+        public CommandAction(string commandLine, QueryParms queryParms) : base(commandLine, null, queryParms)
         {
         }
         public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
@@ -86,7 +102,7 @@ namespace AnyRest
     class StreamAction : Action
     {
         protected string DownloadFileName = null;
-        public StreamAction(string commandLine, QueryParmConfig[] queryParmConfig, string contentType, string downloadFileName) : base(commandLine, contentType, queryParmConfig)
+        public StreamAction(string commandLine, QueryParms queryParms, string contentType, string downloadFileName) : base(commandLine, contentType, queryParms)
         {
             if (string.IsNullOrEmpty(contentType))
                 ContentType = "application/octet-stream";

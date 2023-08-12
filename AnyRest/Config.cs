@@ -21,7 +21,14 @@ namespace AnyRest
     {
         public string Name;   //No default since required
         public string Type;   //Has default
-        public bool Optional; //Has default
+        public bool? Optional; //Has default
+
+        public QueryParm AsQueryParm(QueryparmDefaultsConfig queryparmDefaultsConfig)
+        {
+            var type = Type != null ? Type : queryparmDefaultsConfig.Type;
+            var optional = Optional != null ? (bool)Optional : queryparmDefaultsConfig.Optional;
+            return new QueryParm(Name, type, optional);
+        }
     }
 
     public class ActionDefaultsConfig
@@ -53,23 +60,33 @@ namespace AnyRest
         public string Shell;             //Has default
         public string ArgumentsPrefix;   //Has default
         public string CommandLine;       //Has default
-        public QueryParmConfig[] Parms;  //No default, must be created if null
+        public QueryParmConfig[] Parms;  //No default
         public string ContentType;       //Has default
         public string DownloadFileName;  //Has default, but no defaultDefault. Must be handled by StreamAction constructor
 
-        public Action AsAction()
+        public Action AsAction(ActionDefaultsConfig actionDefaults, QueryparmDefaultsConfig queryparmDefaults)
         {
-            QueryParmConfig[] parms = null;
-            if (Parms == null)
-                parms = new QueryParmConfig[0];
-            else
-                parms = Parms;
+            var queryParms = new QueryParms();
+            if (Parms != null)
+            {
+                foreach (var parm in Parms)
+                {
+                    queryParms.Add(parm.AsQueryParm(queryparmDefaults));
+                }
+            }
 
-            switch (Type.ToLower()) {
+            var type = Type != null ? Type : actionDefaults.Type;
+            var shell = Shell != null ? Shell : actionDefaults.Shell;
+            var argumentsPrefix = ArgumentsPrefix != null ? ArgumentsPrefix : actionDefaults.ArgumentsPrefix;
+            var commandLine = CommandLine != null ? CommandLine : actionDefaults.CommandLine;
+            var contentType = ContentType != null ? ContentType : actionDefaults.ContentType;
+            var downloadFileName = DownloadFileName != null ? DownloadFileName : actionDefaults.DownloadFileName;
+
+            switch (type) {
                 case "command":
-                    return new CommandAction(CommandLine, parms);
+                    return new CommandAction(commandLine, queryParms);
                 case "stream":
-                    return new StreamAction(CommandLine, parms, ContentType, DownloadFileName);
+                    return new StreamAction(commandLine, queryParms, contentType, downloadFileName);
                 default:
                     throw new ApplicationException($"Unknown actiontype \"{Type}\"");
             }
@@ -94,23 +111,26 @@ namespace AnyRest
 
         public ActionConfig[] Actions;
 
-        public Endpoint AsEndpoint()
+        public Endpoint AsEndpoint(EndpointDefaultsConfig endPointDefaults, ActionDefaultsConfig actionDefaults, QueryparmDefaultsConfig queryparmDefaults)
         {
+            var routePrefix = RoutePrefix != null ? RoutePrefix : endPointDefaults.RoutePrefix;
+            var route = Route != null ? Route : endPointDefaults.Route;
+
             var actions = new List<KeyValuePair<string, Action>>();
             if (Actions != null)
             {
                 foreach (var Action in Actions)
-                    actions.Add(new KeyValuePair<string, Action>(Action.Method, Action.AsAction()));
+                    actions.Add(new KeyValuePair<string, Action>(Action.Method, Action.AsAction(actionDefaults, queryparmDefaults)));
             }
-            return new Endpoint(Id, Route, actions);
+            return new Endpoint(Id, route, actions);
         }
     }
 
     public class FileConfig
     {
-        public QueryparmDefaultsConfig QueryparmDefaults;
-        public ActionDefaultsConfig ActionDefaults;
         public EndpointDefaultsConfig EndPointDefaults;
+        public ActionDefaultsConfig ActionDefaults;
+        public QueryparmDefaultsConfig QueryparmDefaults;
 
         public EndpointConfig[] Endpoints;
         public Endpoints AsEndpoints()
@@ -119,7 +139,7 @@ namespace AnyRest
             if (Endpoints != null)
             {
                 foreach (var Endpoint in Endpoints)
-                    endpoints.Add(Endpoint.AsEndpoint());
+                    endpoints.Add(Endpoint.AsEndpoint(EndPointDefaults, ActionDefaults, QueryparmDefaults));
             }
             return endpoints;
         }
