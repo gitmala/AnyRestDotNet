@@ -84,9 +84,9 @@ namespace AnyRest
 
             switch (type) {
                 case "command":
-                    return new CommandAction(commandLine, queryParms);
+                    return new CommandAction(shell, argumentsPrefix, commandLine, queryParms);
                 case "stream":
-                    return new StreamAction(commandLine, queryParms, contentType, downloadFileName);
+                    return new StreamAction(shell, argumentsPrefix, commandLine, queryParms, contentType, downloadFileName);
                 default:
                     throw new ApplicationException($"Unknown actiontype \"{Type}\"");
             }
@@ -122,7 +122,7 @@ namespace AnyRest
                 foreach (var Action in Actions)
                     actions.Add(new KeyValuePair<string, Action>(Action.Method, Action.AsAction(actionDefaults, queryparmDefaults)));
             }
-            return new Endpoint(Id, route, actions);
+            return new Endpoint(Id, routePrefix, route, actions);
         }
     }
 

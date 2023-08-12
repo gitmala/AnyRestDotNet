@@ -52,12 +52,16 @@ namespace AnyRest
 
     public abstract class Action
     {
+        public string Shell;
+        public string ArgumentsPrefix;
         protected string CommandLine;
         QueryParms queryParms;
         protected string ContentType = null;
 
-        protected Action(string commandLine, string contentType, QueryParms queryParms)
+        protected Action(string shell, string argumentsPrefix, string commandLine, string contentType, QueryParms queryParms)
         {
+            Shell = shell;
+            ArgumentsPrefix = argumentsPrefix;
             CommandLine = commandLine;
             this.queryParms = queryParms;
             //ContentType is optional for an actiontype, and is therefore handled by constructor of derived class
@@ -89,7 +93,7 @@ namespace AnyRest
 
     class CommandAction : Action
     {
-        public CommandAction(string commandLine, QueryParms queryParms) : base(commandLine, null, queryParms)
+        public CommandAction(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms) : base(shell, argumentsPrefix, commandLine, null, queryParms)
         {
         }
         public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
@@ -102,7 +106,7 @@ namespace AnyRest
     class StreamAction : Action
     {
         protected string DownloadFileName = null;
-        public StreamAction(string commandLine, QueryParms queryParms, string contentType, string downloadFileName) : base(commandLine, contentType, queryParms)
+        public StreamAction(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms, string contentType, string downloadFileName) : base(shell, argumentsPrefix, commandLine, contentType, queryParms)
         {
             if (string.IsNullOrEmpty(contentType))
                 ContentType = "application/octet-stream";

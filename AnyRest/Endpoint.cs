@@ -8,10 +8,10 @@ namespace AnyRest
         public string RouteSpec;
         Dictionary<string, Action> VerbActions;
 
-        public Endpoint(string id, string routeSpec, IEnumerable<KeyValuePair<string, Action>> verbActions)
+        public Endpoint(string id, string routePrefix, string route, IEnumerable<KeyValuePair<string, Action>> verbActions)
         {
             Id = id;
-            RouteSpec = routeSpec;
+            RouteSpec = route;
             VerbActions = new Dictionary<string, Action>(verbActions);
         }
 
