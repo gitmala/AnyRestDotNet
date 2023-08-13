@@ -144,9 +144,5 @@
         }
     }
   },
-  "required": [
-    "EndPointDefaults",
-    "ActionDefaults",
-    "QueryparmDefaults",
-  ]
+  "required": []
 }

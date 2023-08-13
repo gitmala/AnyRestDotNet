@@ -1,20 +1,23 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 
 namespace AnyRest
 {
     public class QueryparmDefaultsConfig
     {
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue("string")]
         public string Type;
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue(true)]
-        public bool Optional;
+        public bool? Optional;
+
+        [JsonConstructor]
+        public QueryparmDefaultsConfig(string type, bool? optional)
+        {
+            Type = type == null ? QueryParm.DefaultType() : type;
+            Optional = optional == null ? false : optional;
+        }
+
+        public QueryparmDefaultsConfig() : this(null, null) { }
     }
 
     public class QueryParmConfig
@@ -27,30 +30,31 @@ namespace AnyRest
         {
             var type = Type != null ? Type : queryparmDefaultsConfig.Type;
             var optional = Optional != null ? (bool)Optional : queryparmDefaultsConfig.Optional;
-            return new QueryParm(Name, type, optional);
+            return new QueryParm(Name, type, (bool)optional);
         }
     }
 
     public class ActionDefaultsConfig
     {
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue("stream")]
         public string Type;
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue("")]
         public string Shell;
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue("")]
         public string ArgumentsPrefix;
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue("")]
         public string CommandLine;
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue("application/octet-stream")]
         public string ContentType;
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue(null)]
         public string DownloadFileName;
+
+        [JsonConstructor]
+        public ActionDefaultsConfig(string type, string shell, string argumentsPrefix, string commandLine, string contentType, string downloadFileName)
+        {
+            Type = type == null ? Action.DefaultType() : type;
+            Shell = shell == null ? "" : shell;
+            ArgumentsPrefix = argumentsPrefix == null ? "" : argumentsPrefix;
+            CommandLine = commandLine == null ? "" : commandLine;
+            ContentType = contentType == null ? "application/octet-stream" : contentType;
+            DownloadFileName = downloadFileName;
+        }
+
+        public ActionDefaultsConfig() : this(null, null, null, null, null, null) { }
     }
 
     public class ActionConfig
@@ -82,25 +86,23 @@ namespace AnyRest
             var contentType = ContentType != null ? ContentType : actionDefaults.ContentType;
             var downloadFileName = DownloadFileName != null ? DownloadFileName : actionDefaults.DownloadFileName;
 
-            switch (type) {
-                case "command":
-                    return new CommandAction(shell, argumentsPrefix, commandLine, queryParms);
-                case "stream":
-                    return new StreamAction(shell, argumentsPrefix, commandLine, queryParms, contentType, downloadFileName);
-                default:
-                    throw new ApplicationException($"Unknown actiontype \"{Type}\"");
-            }
+            return Action.Create(type, shell, argumentsPrefix, commandLine, queryParms, contentType, downloadFileName);
         }
     }
 
     public class EndpointDefaultsConfig
     {
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue("")]
         public string RoutePrefix;
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [DefaultValue("")]
         public string Route;
+
+        [JsonConstructor]
+        public EndpointDefaultsConfig(string routePrefix, string route)
+        {
+            RoutePrefix = routePrefix == null ? "" : routePrefix;
+            Route = route == null ? "" : route;
+        }
+
+        public EndpointDefaultsConfig() : this(null, null) { }
     }
 
     public class EndpointConfig
@@ -135,6 +137,13 @@ namespace AnyRest
         public EndpointConfig[] Endpoints;
         public Endpoints AsEndpoints()
         {
+            if (EndPointDefaults == null)
+                EndPointDefaults = new EndpointDefaultsConfig();
+            if (ActionDefaults == null)
+                ActionDefaults = new ActionDefaultsConfig();
+            if (QueryparmDefaults == null)
+                QueryparmDefaults = new QueryparmDefaultsConfig();
+
             var endpoints = new Endpoints();
             if (Endpoints != null)
             {

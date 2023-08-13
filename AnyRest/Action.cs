@@ -2,11 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AnyRest
 {
     public class QueryParm
     {
+        public static readonly string[] QueryParmTypes = { "string", "int", "double", "bool" };
+        public static string DefaultType() { return QueryParmTypes[0]; }
+
         public string Name;
         public string Type;
         public bool Optional;
@@ -14,6 +18,8 @@ namespace AnyRest
         public QueryParm(string name, string type, bool optional)
         {
             Name = name;
+            if (!QueryParmTypes.Contains(type))
+                throw new ArgumentException($"Invalid query parm type {type}");
             Type = type;
             Optional = optional;
         }
@@ -52,19 +58,32 @@ namespace AnyRest
 
     public abstract class Action
     {
+        public static readonly string[] ActionTypes = { "stream" , "command" };
+        public static string DefaultType() { return ActionTypes[0]; }
+
         public string Shell;
         public string ArgumentsPrefix;
         protected string CommandLine;
         QueryParms queryParms;
-        protected string ContentType = null;
+        protected string ContentType;
 
-        protected Action(string shell, string argumentsPrefix, string commandLine, string contentType, QueryParms queryParms)
+        protected Action(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms, string contentType)
         {
             Shell = shell;
             ArgumentsPrefix = argumentsPrefix;
             CommandLine = commandLine;
             this.queryParms = queryParms;
-            //ContentType is optional for an actiontype, and is therefore handled by constructor of derived class
+            ContentType = contentType;
+        }
+
+        public static Action Create(string type, string shell, string argumentsPrefix, string commandLine, QueryParms queryParms, string contentType, string downloadFileName)
+        {
+            if (type == ActionTypes[0])
+                return new StreamAction(shell, argumentsPrefix, commandLine, queryParms, contentType, downloadFileName);
+            else if (type == ActionTypes[1])
+                return new CommandAction(shell, argumentsPrefix, commandLine, queryParms);
+            else
+                throw new ApplicationException($"Unknown actiontype \"{type}\"");
         }
 
         public ActionEnvironment MakeActionEnvironment(HttpRequest request)
@@ -93,7 +112,7 @@ namespace AnyRest
 
     class CommandAction : Action
     {
-        public CommandAction(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms) : base(shell, argumentsPrefix, commandLine, null, queryParms)
+        public CommandAction(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms) : base(shell, argumentsPrefix, commandLine, queryParms, null)
         {
         }
         public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
@@ -106,7 +125,7 @@ namespace AnyRest
     class StreamAction : Action
     {
         protected string DownloadFileName = null;
-        public StreamAction(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms, string contentType, string downloadFileName) : base(shell, argumentsPrefix, commandLine, contentType, queryParms)
+        public StreamAction(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms, string contentType, string downloadFileName) : base(shell, argumentsPrefix, commandLine, queryParms, contentType)
         {
             if (string.IsNullOrEmpty(contentType))
                 ContentType = "application/octet-stream";
