@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace AnyRest
 {
@@ -40,5 +39,18 @@ namespace AnyRest
         }
     }
 
-    public class Endpoints : List<Endpoint> { }
+    public class Endpoints : List<Endpoint>
+    {
+        Dictionary<string, Endpoint> usedBaseRoutes = new Dictionary<string, Endpoint>();
+        
+        public new void Add(Endpoint endpoint)
+        {
+            Endpoint existingEndpoint;
+            if (usedBaseRoutes.TryGetValue(endpoint.BaseRoute, out existingEndpoint))
+                throw new ArgumentException($"BaseRoute {endpoint.BaseRoute} is already used by endpoint {existingEndpoint.Id}");
+            usedBaseRoutes.Add(endpoint.BaseRoute, endpoint);
+
+            base.Add(endpoint);
+        }
+    }
 }

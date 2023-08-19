@@ -9,6 +9,8 @@
 	[
 		{ "Id": "test", "RoutePrefix":  "api/v2/", "Route":  ""},
 
+		{ "Id": "test", "RoutePrefix":  "api/v3/", "Route":  ""},
+
 		{ "Id": "EnvTest", "Route": "{foo}/{bar}", "Actions":
 			[
 				{ "Method": "GET", "Type": "stream", "CommandLine": "set AnyREST", "Parms": [ { "Name":"foo", "Type":"string"}, { "Name":"bar", "Type":"string"} ] , "ContentType": "text/plaintext", "DownloadFileName": "AnyRestEnv.txt"}
