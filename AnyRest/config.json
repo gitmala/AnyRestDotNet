@@ -33,7 +33,7 @@
 
 		{ "Id": "StreamFile", "Actions":
 			[
-				{ "Method": "GET", "Type": "stream", "Arguments": "type %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ], "ReturnOnOK": "200"},
+				{ "Method": "GET", "Type": "stream", "Arguments": "type %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ], "ReturnOnOK": "200", "DownloadFilename": ""},
 				{ "Method": "POST", "Type": "stream", "Arguments": "anyRest.exe -io > %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ], "ContentType": "text/plaintext", "ReturnOnOK": "200"}
 			]
 		},

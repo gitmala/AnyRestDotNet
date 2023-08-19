@@ -137,7 +137,7 @@ namespace AnyRest
         public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
         {
             var commandOutput = ShellExecuter.GetStreamResult(Shell, ArgumentsPrefix, Arguments, actionEnvironment);
-            if (DownloadFileName != null)
+            if (!string.IsNullOrEmpty(DownloadFileName))
                 response.Headers.Add("Content-Disposition", $"attachment; filename=\"{DownloadFileName}\"");
             else
                 response.Headers.Add("Content-Disposition", "inline");
