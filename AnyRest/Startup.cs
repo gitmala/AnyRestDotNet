@@ -59,7 +59,7 @@ namespace AnyRest
             {
                 foreach (Endpoint endpointSpecification in userEndpoints)
                 {
-                    endpoints.MapControllerRoute(endpointSpecification.Id, endpointSpecification.RouteSpec, defaults: new
+                    endpoints.MapControllerRoute(endpointSpecification.Id, endpointSpecification.FullRoute, defaults: new
                     {
                         controller = "DynamicEndpoint",
                         action = "MethodHandler",
