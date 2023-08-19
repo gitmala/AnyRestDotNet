@@ -48,7 +48,7 @@ namespace AnyRest
     public class AliveController : Controller
     {
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GET(int foo)
+        public IActionResult GET()
         {
             return Ok($"Im aliiive!!");
         }
