@@ -61,13 +61,16 @@
           "type": "string",
           "default": ""
         },
-        "CommandLine": {
+        "Arguments": {
           "type": "string",
           "default": ""
         },
         "ContentType": {
           "type": "string",
           "default": "application/octet-stream"
+        },
+        "DownloadFileName": {
+          "type": "string"
         }
       },
       "required": []
