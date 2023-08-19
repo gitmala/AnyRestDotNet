@@ -13,35 +13,35 @@
 
 		{ "Id": "EnvTest", "Route": "{foo}/{bar}", "Actions":
 			[
-				{ "Method": "GET", "Type": "stream", "CommandLine": "set AnyREST", "Parms": [ { "Name":"foo", "Type":"string"}, { "Name":"bar", "Type":"string"} ] , "ContentType": "text/plaintext", "DownloadFileName": "AnyRestEnv.txt"}
+				{ "Method": "GET", "Type": "stream", "Arguments": "set AnyREST", "Parms": [ { "Name":"foo", "Type":"string"}, { "Name":"bar", "Type":"string"} ] , "ContentType": "text/plaintext", "DownloadFileName": "AnyRestEnv.txt"}
 			]
 		},
 
 		{ "Id": "CmdFile_Queryparm", "Actions":
 			[
-				{ "Method": "GET", "Type": "command", "CommandLine": "type %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ] },
-				{ "Method": "POST", "Type": "command", "CommandLine": "anyRest.exe -io > %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ] }
+				{ "Method": "GET", "Type": "command", "Arguments": "type %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ] },
+				{ "Method": "POST", "Type": "command", "Arguments": "anyRest.exe -io > %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ] }
 			]
 		},
 
 		{ "Id": "CmdFile_RouteParm", "Route": "{filename}", "Actions":
 			[
-				{ "Method": "GET", "Type": "command", "CommandLine": "type %AnyRESTRouteParm_filename%"},
-				{ "Method": "POST", "Type": "command", "CommandLine": "anyRest.exe -io > %AnyRESTRouteParm_filename%"}
+				{ "Method": "GET", "Type": "command", "Arguments": "type %AnyRESTRouteParm_filename%"},
+				{ "Method": "POST", "Type": "command", "Arguments": "anyRest.exe -io > %AnyRESTRouteParm_filename%"}
 		  ]
 		},
 
 		{ "Id": "StreamFile", "Actions":
 			[
-				{ "Method": "GET", "Type": "stream", "CommandLine": "type %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ], "ReturnOnOK": "200"},
-				{ "Method": "POST", "Type": "stream", "CommandLine": "anyRest.exe -io > %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ], "ContentType": "text/plaintext", "ReturnOnOK": "200"}
+				{ "Method": "GET", "Type": "stream", "Arguments": "type %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ], "ReturnOnOK": "200"},
+				{ "Method": "POST", "Type": "stream", "Arguments": "anyRest.exe -io > %AnyRESTQueryParm_filename%", "Parms": [ { "Name":"filename", "Type":"string"} ], "ContentType": "text/plaintext", "ReturnOnOK": "200"}
 			]
 		},
 
 		{ "Id": "StreamBackReqBody", "Actions":
 			[
-				{ "Method": "PUT", "Type": "stream", "CommandLine": "anyRest.exe -io"},
-				{ "Method": "POST", "Type": "stream", "CommandLine": "anyRest.exe -s 5000 && anyRest.exe -io"}
+				{ "Method": "PUT", "Type": "stream", "Arguments": "anyRest.exe -io"},
+				{ "Method": "POST", "Type": "stream", "Arguments": "anyRest.exe -s 5000 && anyRest.exe -io"}
 			]
 		}
 	]

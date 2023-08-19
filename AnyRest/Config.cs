@@ -39,17 +39,17 @@ namespace AnyRest
         public string Type;
         public string Shell;
         public string ArgumentsPrefix;
-        public string CommandLine;
+        public string Arguments;
         public string ContentType;
         public string DownloadFileName;
 
         [JsonConstructor]
-        public ActionDefaultsConfig(string type, string shell, string argumentsPrefix, string commandLine, string contentType, string downloadFileName)
+        public ActionDefaultsConfig(string type, string shell, string argumentsPrefix, string arguments, string contentType, string downloadFileName)
         {
             Type = type == null ? Action.DefaultType() : type;
             Shell = shell == null ? "" : shell;
             ArgumentsPrefix = argumentsPrefix == null ? "" : argumentsPrefix;
-            CommandLine = commandLine == null ? "" : commandLine;
+            Arguments = arguments == null ? "" : arguments;
             ContentType = contentType == null ? "application/octet-stream" : contentType;
             DownloadFileName = downloadFileName;
         }
@@ -63,7 +63,7 @@ namespace AnyRest
         public string Type;              //Has default
         public string Shell;             //Has default
         public string ArgumentsPrefix;   //Has default
-        public string CommandLine;       //Has default
+        public string Arguments;       //Has default
         public QueryParmConfig[] Parms;  //No default
         public string ContentType;       //Has default
         public string DownloadFileName;  //Has default, but no defaultDefault. Must be handled by StreamAction constructor
@@ -82,11 +82,11 @@ namespace AnyRest
             var type = Type != null ? Type : actionDefaults.Type;
             var shell = Shell != null ? Shell : actionDefaults.Shell;
             var argumentsPrefix = ArgumentsPrefix != null ? ArgumentsPrefix : actionDefaults.ArgumentsPrefix;
-            var commandLine = CommandLine != null ? CommandLine : actionDefaults.CommandLine;
+            var arguments = Arguments != null ? Arguments : actionDefaults.Arguments;
             var contentType = ContentType != null ? ContentType : actionDefaults.ContentType;
             var downloadFileName = DownloadFileName != null ? DownloadFileName : actionDefaults.DownloadFileName;
 
-            return Action.Create(type, shell, argumentsPrefix, commandLine, queryParms, contentType, downloadFileName);
+            return Action.Create(type, shell, argumentsPrefix, arguments, queryParms, contentType, downloadFileName);
         }
     }
 

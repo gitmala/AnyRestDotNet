@@ -63,25 +63,25 @@ namespace AnyRest
 
         public string Shell;
         public string ArgumentsPrefix;
-        protected string CommandLine;
+        protected string Arguments;
         QueryParms queryParms;
         protected string ContentType;
 
-        protected Action(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms, string contentType)
+        protected Action(string shell, string argumentsPrefix, string arguments, QueryParms queryParms, string contentType)
         {
             Shell = shell;
             ArgumentsPrefix = argumentsPrefix;
-            CommandLine = commandLine;
+            Arguments = arguments;
             this.queryParms = queryParms;
             ContentType = contentType;
         }
 
-        public static Action Create(string type, string shell, string argumentsPrefix, string commandLine, QueryParms queryParms, string contentType, string downloadFileName)
+        public static Action Create(string type, string shell, string argumentsPrefix, string arguments, QueryParms queryParms, string contentType, string downloadFileName)
         {
             if (type == ActionTypes[0])
-                return new StreamAction(shell, argumentsPrefix, commandLine, queryParms, contentType, downloadFileName);
+                return new StreamAction(shell, argumentsPrefix, arguments, queryParms, contentType, downloadFileName);
             else if (type == ActionTypes[1])
-                return new CommandAction(shell, argumentsPrefix, commandLine, queryParms);
+                return new CommandAction(shell, argumentsPrefix, arguments, queryParms);
             else
                 throw new ApplicationException($"Unknown actiontype \"{type}\"");
         }
@@ -112,12 +112,12 @@ namespace AnyRest
 
     class CommandAction : Action
     {
-        public CommandAction(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms) : base(shell, argumentsPrefix, commandLine, queryParms, null)
+        public CommandAction(string shell, string argumentsPrefix, string arguments, QueryParms queryParms) : base(shell, argumentsPrefix, arguments, queryParms, null)
         {
         }
         public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
         {
-            var result = ShellExecuter.GetCommandResult(CommandLine, actionEnvironment);
+            var result = ShellExecuter.GetCommandResult(Shell, ArgumentsPrefix, Arguments, actionEnvironment);
             return new OkObjectResult(result);
         }
     }
@@ -125,7 +125,7 @@ namespace AnyRest
     class StreamAction : Action
     {
         protected string DownloadFileName = null;
-        public StreamAction(string shell, string argumentsPrefix, string commandLine, QueryParms queryParms, string contentType, string downloadFileName) : base(shell, argumentsPrefix, commandLine, queryParms, contentType)
+        public StreamAction(string shell, string argumentsPrefix, string arguments, QueryParms queryParms, string contentType, string downloadFileName) : base(shell, argumentsPrefix, arguments, queryParms, contentType)
         {
             if (string.IsNullOrEmpty(contentType))
                 ContentType = "application/octet-stream";
@@ -136,7 +136,7 @@ namespace AnyRest
 
         public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
         {
-            var commandOutput = ShellExecuter.GetStreamResult(CommandLine, actionEnvironment);
+            var commandOutput = ShellExecuter.GetStreamResult(Shell, ArgumentsPrefix, Arguments, actionEnvironment);
             if (DownloadFileName != null)
                 response.Headers.Add("Content-Disposition", $"attachment; filename=\"{DownloadFileName}\"");
             else

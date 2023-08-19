@@ -117,7 +117,7 @@
                     "ArgumentsPrefix": {
                       "type": "string"
                     },
-                    "CommandLine": {
+                    "Arguments": {
                       "type": "string"
                     },
                     "Parms": {
@@ -133,7 +133,7 @@
                   },
                   "required": [
                     "Method",
-                    "CommandLine"
+                    "Arguments"
                   ]
                 }
             }

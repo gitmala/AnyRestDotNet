@@ -30,7 +30,7 @@ namespace AnyRest
             {}
         }
 
-        static Process StartProcess(string commandLine, ActionEnvironment actionEnvironment)
+        static Process StartProcess(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment)
         {
             Process p = new Process();
 
@@ -39,8 +39,8 @@ namespace AnyRest
             p.StartInfo.RedirectStandardError = true;
             p.StartInfo.RedirectStandardInput = true;
 
-            p.StartInfo.FileName = "cmd";
-            p.StartInfo.Arguments = $"/c {commandLine}";
+            p.StartInfo.FileName = shell;
+            p.StartInfo.Arguments = $"{argumentsPrefix}{arguments}";
 
             p.StartInfo.Environment.Add($"AnyRESTHttpMethod", actionEnvironment.RequestMethod);
             p.StartInfo.Environment.Add($"AnyRESTPath", actionEnvironment.RequestPath);
@@ -78,9 +78,9 @@ namespace AnyRest
             p.Dispose();
         }
 
-        public static CommandResult GetCommandResult(string commandLine, ActionEnvironment actionEnvironment, int timeOut = -1)
+        public static CommandResult GetCommandResult(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment, int timeOut = -1)
         {
-            using (Process p = StartProcess(commandLine, actionEnvironment))
+            using (Process p = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment))
             {
                 var stdOutputTask = p.StandardOutput.ReadToEndAsync();
                 var stdErrorTask = p.StandardError.ReadToEndAsync();
@@ -99,9 +99,9 @@ namespace AnyRest
             }
         }
 
-        public static Stream GetStreamResult(string commandLine, ActionEnvironment actionEnvironment, int timeOut = -1)
+        public static Stream GetStreamResult(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment, int timeOut = -1)
         {
-            Process p = StartProcess(commandLine, actionEnvironment);
+            Process p = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment);
             Task.Run(() => WaitForProcessExit(p, timeOut));
             return p.StandardOutput.BaseStream;
         }
