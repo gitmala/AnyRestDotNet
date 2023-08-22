@@ -32,7 +32,7 @@ namespace AnyRest
 
         static Process StartProcess(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment)
         {
-            Process p = new Process();
+            var p = new Process();
 
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;

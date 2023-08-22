@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using ActionParm = System.Collections.Generic.KeyValuePair<string, string>;
+
 namespace AnyRest
 {
     public class QueryParm
@@ -27,10 +29,12 @@ namespace AnyRest
 
     public class QueryParms : List<QueryParm> { }
 
+    public class ActionParms : List<ActionParm> { }
+
     public class ActionEnvironment
     {
-        public List<KeyValuePair<string, string>> QueryParms = new List<KeyValuePair<string, string>>();
-        public List<KeyValuePair<string, string>> RouteValues = new List<KeyValuePair<string, string>>();
+        public ActionParms QueryParms = new();
+        public ActionParms RouteValues = new();
         public string RequestMethod = null;
         public string RequestPath = null;
         public string ContentType = null;
@@ -46,12 +50,12 @@ namespace AnyRest
 
         public void AddQueryParm(string name, string value)
         {
-            QueryParms.Add(new KeyValuePair<string, string>(name, value));
+            QueryParms.Add(new ActionParm(name, value));
         }
 
         public void AddRouteParm(string name, string value)
         {
-            RouteValues.Add(new KeyValuePair<string, string>(name, value));
+            RouteValues.Add(new ActionParm(name, value));
         }
 
     }

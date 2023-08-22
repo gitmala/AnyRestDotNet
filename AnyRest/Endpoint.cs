@@ -41,7 +41,7 @@ namespace AnyRest
 
     public class Endpoints : List<Endpoint>
     {
-        Dictionary<string, Endpoint> usedBaseRoutes = new Dictionary<string, Endpoint>();
+        Dictionary<string, Endpoint> usedBaseRoutes = new();
         
         public new void Add(Endpoint endpoint)
         {
