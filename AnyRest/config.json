@@ -1,7 +1,7 @@
 {
 	"EndPointDefaults":  { "RoutePrefix":  "api/v1/" },
 
-	"ActionDefaults":  { "Shell": "cmd.exe", "ArgumentsPrefix":  "/c ",  "DownloadFilename": "xxx"},
+	"ActionDefaults":  { "Shell": "cmd.exe", "ArgumentsPrefix":  "/c ", "DownloadFilename": "xxx"},
 
 	"QueryparmDefaults":  { "Type":  "string" },
 
@@ -10,6 +10,12 @@
 		{ "Id": "test", "RoutePrefix":  "api/v2/", "Route":  ""},
 
 		{ "Id": "test", "RoutePrefix":  "api/v3/", "Route":  ""},
+
+		{ "Id": "hej", "Actions":
+			[
+				{ "Method": "GET", "Type": "stream", "Arguments": "echo hej", "ContentType": "text/plaintext", "DownloadFilename": ""}
+			]
+		},
 
 		{ "Id": "EnvTest", "Route": "{foo}/{bar}", "Actions":
 			[
