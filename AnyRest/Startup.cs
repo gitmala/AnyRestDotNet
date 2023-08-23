@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.SwaggerGen.ConventionalRouting;
@@ -57,14 +58,10 @@ namespace AnyRest
 
             app.UseEndpoints(endpoints =>
             {
-                foreach (Endpoint endpointSpecification in userEndpoints)
+                endpoints.MapControllers();
+                foreach (Endpoint userEndpoint in userEndpoints)
                 {
-                    endpoints.MapControllerRoute(endpointSpecification.Id, endpointSpecification.FullRoute, defaults: new
-                    {
-                        controller = "DynamicEndpoint",
-                        action = "MethodHandler",
-                        endpointSpecification = (Endpoint)endpointSpecification
-                    });
+                    endpoints.Map(userEndpoint.FullRoute, (HttpContext context) => { return userEndpoint.HandleRequest(context); });
                 }
 
                 ConventionalRoutingSwaggerGen.UseRoutes(endpoints);

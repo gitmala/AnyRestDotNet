@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,7 +110,7 @@ namespace AnyRest
             return actionEnvironment;
         }
 
-        public abstract IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response);
+        public abstract IResult Run(ActionEnvironment actionEnvironment, HttpResponse response);
     }
 
     class CommandAction : Action
@@ -119,10 +118,10 @@ namespace AnyRest
         public CommandAction(string shell, string argumentsPrefix, string arguments, QueryParms queryParms) : base(shell, argumentsPrefix, arguments, queryParms, null)
         {
         }
-        public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
+        public override IResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
         {
             var result = ShellExecuter.GetCommandResult(Shell, ArgumentsPrefix, Arguments, actionEnvironment);
-            return new OkObjectResult(result);
+            return Results.Ok(result);
         }
     }
 
@@ -138,14 +137,14 @@ namespace AnyRest
             DownloadFileName = downloadFileName;
         }
 
-        public override IActionResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
+        public override IResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
         {
             var commandOutput = ShellExecuter.GetStreamResult(Shell, ArgumentsPrefix, Arguments, actionEnvironment);
             if (!string.IsNullOrEmpty(DownloadFileName))
                 response.Headers.Add("Content-Disposition", $"attachment; filename=\"{DownloadFileName}\"");
             else
                 response.Headers.Add("Content-Disposition", "inline");
-            return new FileStreamResult(commandOutput, ContentType);
+            return Results.Stream(commandOutput, ContentType);
         }
     }
 

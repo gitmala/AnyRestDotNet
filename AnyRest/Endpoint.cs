@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 
 namespace AnyRest
@@ -36,6 +37,38 @@ namespace AnyRest
         public string AsString()
         {
             return $"Id: {Id}, BaseRoute: {BaseRoute}, FullRoute: {FullRoute}";
+        }
+
+        public IResult HandleRequest(HttpContext context)
+        {
+            IResult returnResult;
+
+            try
+            {
+                var action = GetAction(context.Request.Method);
+                try
+                {
+                    var actionEnvironment = action.MakeActionEnvironment(context.Request);
+                    try
+                    {
+                        returnResult = action.Run(actionEnvironment, context.Response);
+                    }
+                    catch (Exception ex)
+                    {
+                        returnResult = Results.Problem(ex.Message);
+                    }
+                }
+                catch (ApplicationException ex)
+                {
+                    returnResult = Results.BadRequest(ex.Message);
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                returnResult = Results.NotFound($"No action of type {context.Request.Method} for endpoint {Id}");
+            }
+
+            return returnResult;
         }
     }
 
