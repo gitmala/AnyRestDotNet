@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace AnyRest
 {
@@ -39,8 +40,26 @@ namespace AnyRest
             return $"Id: {Id}, BaseRoute: {BaseRoute}, FullRoute: {FullRoute}";
         }
 
-        public IResult HandleRequest(HttpContext context)
+        private static Guid SetRequestId(HttpResponse response)
         {
+            var requestId = Guid.NewGuid();
+            response.Headers.Add("RequestId", requestId.ToString());
+            return requestId;
+        }
+
+        public static IResult HandleDefaultRequest(HttpContext context, IRequestLogger logger)
+        {
+            var requestId = SetRequestId(context.Response);
+            logger.LogRequest(context, requestId, "CatchAll", HttpStatusCode.NotFound, "No endpoint defined for route");
+            return Results.NotFound("No endpoint defined for route");
+        }
+
+        public IResult HandleRequest(HttpContext context, IRequestLogger logger)
+        {
+            var requestId = SetRequestId(context.Response);
+            string logExtraText = "";
+            HttpStatusCode logStatusCode = HttpStatusCode.OK;
+
             IResult returnResult;
 
             try
@@ -55,19 +74,26 @@ namespace AnyRest
                     }
                     catch (Exception ex)
                     {
-                        returnResult = Results.Problem(ex.Message);
+                        logStatusCode = HttpStatusCode.InternalServerError;
+                        logExtraText = ex.Message;
+                        returnResult = Results.Problem("Something bad happened handeling request");
                     }
                 }
                 catch (ApplicationException ex)
                 {
-                    returnResult = Results.BadRequest(ex.Message);
+                    logStatusCode = HttpStatusCode.BadRequest;
+                    logExtraText = ex.Message;
+                    returnResult = Results.BadRequest(logExtraText);
                 }
             }
             catch (KeyNotFoundException)
             {
-                returnResult = Results.NotFound($"No action of type {context.Request.Method} for endpoint {Id}");
+                logStatusCode = HttpStatusCode.NotFound;
+                logExtraText = "Method not defined for endpoint";
+                returnResult = Results.NotFound($"No method of type {context.Request.Method} defined for endpoint {Id}");
             }
 
+            logger.LogRequest(context, requestId, Id, logStatusCode, logExtraText);
             return returnResult;
         }
     }

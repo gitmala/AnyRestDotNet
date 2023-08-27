@@ -59,10 +59,12 @@ namespace AnyRest
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                var logger = new ConsoleLogger();
                 foreach (Endpoint userEndpoint in userEndpoints)
                 {
-                    endpoints.Map(userEndpoint.FullRoute, (HttpContext context) => { return userEndpoint.HandleRequest(context); });
+                    endpoints.Map(userEndpoint.FullRoute, (HttpContext context) => { return userEndpoint.HandleRequest(context, logger); });
                 }
+                endpoints.Map("{*rest}", (HttpContext context) => { return Endpoint.HandleDefaultRequest(context, logger); });
 
                 ConventionalRoutingSwaggerGen.UseRoutes(endpoints);
             });
