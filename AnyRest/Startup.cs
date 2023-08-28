@@ -64,7 +64,7 @@ namespace AnyRest
                 {
                     endpoints.Map(userEndpoint.FullRoute, (HttpContext context) => { return userEndpoint.HandleRequest(context, logger); });
                 }
-                endpoints.Map("{*rest}", (HttpContext context) => { return Endpoint.HandleDefaultRequest(context, logger); });
+                endpoints.MapFallback((HttpContext context) => { return Endpoint.HandleFallBackRequest(context, logger); });
 
                 ConventionalRoutingSwaggerGen.UseRoutes(endpoints);
             });

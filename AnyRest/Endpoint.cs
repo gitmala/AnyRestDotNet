@@ -56,9 +56,8 @@ namespace AnyRest
             return requestId;
         }
 
-        const string CatchAllId = "catchall";
-
-        public static IResult HandleDefaultRequest(HttpContext context, IRequestLogger logger)
+        const string CatchAllId = "fallback";
+        public static IResult HandleFallBackRequest(HttpContext context, IRequestLogger logger)
         {
             var requestId = SetRequestId(context.Response);
             logger.LogRequest(context, requestId, CatchAllId, HttpStatusCode.NotFound, "No endpoint defined for route");
