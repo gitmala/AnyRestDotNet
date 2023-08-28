@@ -1,26 +1,25 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnyRest
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
-    public class AliveController : Controller
+    [Route(ControllerRoute)]
+    public class BultIn : Controller
     {
+        public const string ControllerRoute = "builtin";
+
+        [Route("status")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GET()
+        public IActionResult status()
         {
             return Ok($"Im aliiive!!");
         }
-    }
 
-    [ApiController]
-    [Route("[controller]")]
-    public class ConfigSchemaController : Controller
-    {
+        [Route("configschema")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GET()
-        {
+        public IActionResult configschema() {
             var gen = new Newtonsoft.Json.Schema.Generation.JSchemaGenerator();
             var schema = gen.Generate(typeof(FileConfig));
             return Ok(schema);

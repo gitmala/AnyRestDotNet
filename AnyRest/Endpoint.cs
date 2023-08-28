@@ -23,8 +23,8 @@ namespace AnyRest
                 throw new ArgumentException($"Id of endpoint cannot be \"\"");
             if (id.ToLower() == CatchAllId)
                 throw new ArgumentException($"Id of endpoint cannot be \"{CatchAllId}\" (Reserved word)");
-            if (id.ToLower() == "builtin")
-                throw new ArgumentException($"Id of endpoint cannot be \"builtin\" (Reserved word)");
+            if (id.ToLower() == BultIn.ControllerRoute)
+                throw new ArgumentException($"Id of endpoint cannot be \"{BultIn.ControllerRoute}\" (Reserved word)");
             if (IdInvalid.IsMatch(id))
                 throw new ArgumentException($"Id of endpoint {id} contains invalid charactars");
             if (RoutePrefixInvalid.IsMatch(routePrefix))
