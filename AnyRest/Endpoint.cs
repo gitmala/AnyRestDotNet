@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace AnyRest
 {
@@ -12,6 +13,10 @@ namespace AnyRest
         public string FullRoute;
         Dictionary<string, Action> VerbActions;
 
+        const string InvalidChars = "{}*:";
+        static readonly Regex IdInvalid = new($"[{InvalidChars + '/'}]");
+        static readonly Regex RoutePrefixInvalid = new($"[{InvalidChars}]");
+
         public Endpoint(string id, string routePrefix, string route, IEnumerable<KeyValuePair<string, Action>> verbActions)
         {
             if (id == "")
@@ -20,9 +25,9 @@ namespace AnyRest
                 throw new ArgumentException($"Id of endpoint cannot be \"{CatchAllId}\" (Reserved word)");
             if (id.ToLower() == "builtin")
                 throw new ArgumentException($"Id of endpoint cannot be \"builtin\" (Reserved word)");
-            if (id.Contains('{') || id.Contains('}'))
+            if (IdInvalid.IsMatch(id))
                 throw new ArgumentException($"Id of endpoint {id} contains invalid charactars");
-            if (routePrefix.Contains('{') || routePrefix.Contains('}'))
+            if (RoutePrefixInvalid.IsMatch(routePrefix))
                 throw new ArgumentException($"routePrefix of endpoint {id} contains invalid charactars");
 
             Id = id;
