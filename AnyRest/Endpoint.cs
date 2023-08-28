@@ -14,12 +14,18 @@ namespace AnyRest
 
         public Endpoint(string id, string routePrefix, string route, IEnumerable<KeyValuePair<string, Action>> verbActions)
         {
-            Id = id;
-
+            if (id == "")
+                throw new ArgumentException($"Id of endpoint cannot be \"\"");
+            if (id.ToLower() == CatchAllId)
+                throw new ArgumentException($"Id of endpoint cannot be \"{CatchAllId}\" (Reserved word)");
+            if (id.ToLower() == "builtin")
+                throw new ArgumentException($"Id of endpoint cannot be \"builtin\" (Reserved word)");
             if (id.Contains('{') || id.Contains('}'))
                 throw new ArgumentException($"Id of endpoint {id} contains invalid charactars");
             if (routePrefix.Contains('{') || routePrefix.Contains('}'))
                 throw new ArgumentException($"routePrefix of endpoint {id} contains invalid charactars");
+
+            Id = id;
 
             BaseRoute = $"/{routePrefix}/{id}";
             BaseRoute = BaseRoute.Replace("//", "/");
@@ -47,10 +53,12 @@ namespace AnyRest
             return requestId;
         }
 
+        const string CatchAllId = "catchall";
+
         public static IResult HandleDefaultRequest(HttpContext context, IRequestLogger logger)
         {
             var requestId = SetRequestId(context.Response);
-            logger.LogRequest(context, requestId, "CatchAll", HttpStatusCode.NotFound, "No endpoint defined for route");
+            logger.LogRequest(context, requestId, CatchAllId, HttpStatusCode.NotFound, "No endpoint defined for route");
             return Results.NotFound("No endpoint defined for route");
         }
 
