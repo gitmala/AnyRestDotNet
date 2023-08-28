@@ -32,11 +32,9 @@ namespace AnyRest
 
             Id = id;
 
-            BaseRoute = $"/{routePrefix}/{id}";
-            BaseRoute = BaseRoute.Replace("//", "/");
+            BaseRoute = $"{routePrefix.Trim('/')}/{id}";
 
-            FullRoute = $"/{BaseRoute}/{route}";
-            FullRoute = FullRoute.Replace("//", "/").TrimEnd('/');
+            FullRoute = $"/{BaseRoute}/{route.Trim('/')}".TrimEnd('/');
 
             VerbActions = new Dictionary<string, Action>(verbActions);
         }
