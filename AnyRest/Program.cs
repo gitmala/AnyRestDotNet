@@ -26,15 +26,19 @@ namespace AnyRest
             {
                 var filename = "config.json";
                 Endpoints endpoints;
+#if !DEBUG
                 try
                 {
+#endif
                     endpoints = FileConfig.LoadFromFile(filename);
+#if !DEBUG
                 }
                 catch (ArgumentException ex)
                 {
                     Console.WriteLine($"Config error: {ex.Message}");
                     return 1;
                 }
+#endif
                 Console.WriteLine($"Endpoints from file {filename}");
                 foreach (var endpoint in endpoints)
                 {
