@@ -102,8 +102,9 @@ namespace AnyRest
         public static Stream GetStreamResult(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment, int timeOut = -1)
         {
             Process p = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment);
+            var returnSteam = p.StandardOutput.BaseStream;
             Task.Run(() => WaitForProcessExit(p, timeOut));
-            return p.StandardOutput.BaseStream;
+            return returnSteam;
         }
     }
 }
