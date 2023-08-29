@@ -7,13 +7,19 @@
 
 	"Endpoints":
 	[
-		{ "Id": "test", "RoutePrefix":  "api/v2/", "Route":  ""},
+		{ "Id": "empty"},
 
-		{ "Id": "test", "RoutePrefix":  "api/v3/", "Route":  ""},
+		{ "Id": "empty", "RoutePrefix":  "api/v2"},
 
-		{ "Id": "hej", "Actions":
+		{ "Id": "HelloWorld1", "Actions":
 			[
-				{ "Method": "GET", "Type": "stream", "Arguments": "echo hej", "ContentType": "text/plaintext", "DownloadFilename": ""}
+				{ "Method": "GET", "Type": "stream", "Arguments": "echo Hello World!", "ContentType": "text/plaintext", "DownloadFilename": ""}
+			]
+		},
+
+		{ "Id": "HelloWorld2", "Actions":
+			[
+				{ "Method": "GET", "Type": "command", "Arguments": "echo Hello World!"}
 			]
 		},
 
