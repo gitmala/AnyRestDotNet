@@ -80,7 +80,7 @@ namespace AnyRest
 
         public static CommandResult GetCommandResult(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment, int timeOut = -1)
         {
-            using (Process p = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment))
+            using (var p = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment))
             {
                 var stdOutputTask = p.StandardOutput.ReadToEndAsync();
                 var stdErrorTask = p.StandardError.ReadToEndAsync();
@@ -101,7 +101,7 @@ namespace AnyRest
 
         public static Stream GetStreamResult(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment, int timeOut = -1)
         {
-            Process p = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment);
+            var p = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment);
             var returnSteam = p.StandardOutput.BaseStream;
             Task.Run(() => WaitForProcessExit(p, timeOut));
             return returnSteam;
