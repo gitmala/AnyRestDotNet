@@ -67,8 +67,8 @@ namespace AnyRest
         public IResult HandleRequest(HttpContext context, IRequestLogger logger)
         {
             var requestId = SetRequestId(context.Response);
-            string logExtraText = "";
-            HttpStatusCode logStatusCode = HttpStatusCode.OK;
+            var logExtraText = "";
+            var logStatusCode = HttpStatusCode.OK;
 
             IResult returnResult;
 

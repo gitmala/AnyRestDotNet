@@ -32,36 +32,36 @@ namespace AnyRest
 
         static Process StartProcess(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment)
         {
-            var p = new Process();
+            var process = new Process();
 
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.RedirectStandardInput = true;
 
-            p.StartInfo.FileName = shell;
-            p.StartInfo.Arguments = $"{argumentsPrefix}{arguments}";
+            process.StartInfo.FileName = shell;
+            process.StartInfo.Arguments = $"{argumentsPrefix}{arguments}";
 
-            p.StartInfo.Environment.Add($"AnyRESTHttpMethod", actionEnvironment.RequestMethod);
-            p.StartInfo.Environment.Add($"AnyRESTPath", actionEnvironment.RequestPath);
-            p.StartInfo.Environment.Add($"AnyRESTRequestId", actionEnvironment.RequestId);
+            process.StartInfo.Environment.Add($"AnyRESTHttpMethod", actionEnvironment.RequestMethod);
+            process.StartInfo.Environment.Add($"AnyRESTPath", actionEnvironment.RequestPath);
+            process.StartInfo.Environment.Add($"AnyRESTRequestId", actionEnvironment.RequestId);
             if (!String.IsNullOrEmpty(actionEnvironment.ContentType))
-                p.StartInfo.Environment.Add($"AnyRESTContentType", actionEnvironment.ContentType);
+                process.StartInfo.Environment.Add($"AnyRESTContentType", actionEnvironment.ContentType);
 
             foreach (var queryParm in actionEnvironment.QueryParms)
-                p.StartInfo.Environment.Add($"AnyRESTQueryParm_{queryParm.Key}", queryParm.Value);
+                process.StartInfo.Environment.Add($"AnyRESTQueryParm_{queryParm.Key}", queryParm.Value);
 
             foreach (var routeValue in actionEnvironment.RouteValues)
             {
-                p.StartInfo.Environment.Add($"AnyRESTRouteParm_{routeValue.Key}", routeValue.Value);
+                process.StartInfo.Environment.Add($"AnyRESTRouteParm_{routeValue.Key}", routeValue.Value);
             }
 
             try
             {
-                if (p.Start())
+                if (process.Start())
                 {
-                    Task.Run(() => StreamBodyToStdInput(actionEnvironment.RequestBody, p.StandardInput.BaseStream));
-                    return p;
+                    Task.Run(() => StreamBodyToStdInput(actionEnvironment.RequestBody, process.StandardInput.BaseStream));
+                    return process;
                 }
                 else
                     throw new ApplicationException("starting process returned null");
@@ -72,29 +72,29 @@ namespace AnyRest
             }
         }
 
-        public static void WaitForProcessExit(Process p, int timeOut)
+        public static void WaitForProcessExit(Process process, int timeOut)
         {
-            if (!p.WaitForExit(timeOut))
-                p.Kill(true);
-            p.Dispose();
+            if (!process.WaitForExit(timeOut))
+                process.Kill(true);
+            process.Dispose();
         }
 
         public static CommandResult GetCommandResult(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment, int timeOut = -1)
         {
-            using (var p = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment))
+            using (var process = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment))
             {
-                var stdOutputTask = p.StandardOutput.ReadToEndAsync();
-                var stdErrorTask = p.StandardError.ReadToEndAsync();
+                var stdOutputTask = process.StandardOutput.ReadToEndAsync();
+                var stdErrorTask = process.StandardError.ReadToEndAsync();
 
                 //Use WaitForProcessExit so process is killed after timeout?
                 //In that case do not use using() since WaitForProcessExit disposes p
-                p.WaitForExit(timeOut);
+                process.WaitForExit(timeOut);
 
                 var result = new CommandResult()
                 {
                     stdOutput = stdOutputTask.Result,
                     stdError = stdErrorTask.Result,
-                    exitCode = p.ExitCode
+                    exitCode = process.ExitCode
                 };
                 return result;
             }
@@ -102,9 +102,9 @@ namespace AnyRest
 
         public static Stream GetStreamResult(string shell, string argumentsPrefix, string arguments, ActionEnvironment actionEnvironment, int timeOut = -1)
         {
-            var p = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment);
-            var returnSteam = p.StandardOutput.BaseStream;
-            Task.Run(() => WaitForProcessExit(p, timeOut));
+            var process = StartProcess(shell, argumentsPrefix, arguments, actionEnvironment);
+            var returnSteam = process.StandardOutput.BaseStream;
+            Task.Run(() => WaitForProcessExit(process, timeOut));
             return returnSteam;
         }
     }
