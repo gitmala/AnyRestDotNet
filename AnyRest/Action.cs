@@ -36,15 +36,17 @@ namespace AnyRest
         public ActionParms RouteValues = new();
         public string RequestMethod = null;
         public string RequestPath = null;
+        public string RequestId = null;
         public string ContentType = null;
         public System.IO.Stream RequestBody = null;
 
-        public ActionEnvironment(string requestMethod, string requestPath, string contentType, System.IO.Stream requestBody)
+        public ActionEnvironment(string requestMethod, string requestPath, string contentType, Guid requestId, System.IO.Stream requestBody)
         {
             RequestMethod = requestMethod;
             RequestPath = requestPath;
             RequestBody = requestBody;
             ContentType = contentType;
+            RequestId = requestId.ToString();
         }
 
         public void AddQueryParm(string name, string value)
@@ -89,9 +91,9 @@ namespace AnyRest
                 throw new ApplicationException($"Unknown actiontype \"{type}\"");
         }
 
-        public ActionEnvironment MakeActionEnvironment(HttpRequest request)
+        public ActionEnvironment MakeActionEnvironment(HttpRequest request, Guid requestId)
         {
-            var actionEnvironment = new ActionEnvironment(request.Method, request.Path, ContentType, request.Body);
+            var actionEnvironment = new ActionEnvironment(request.Method, request.Path, ContentType, requestId, request.Body);
 
             foreach (var queryParmConfig in queryParms)
             {

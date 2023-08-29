@@ -77,7 +77,7 @@ namespace AnyRest
                 var action = GetAction(context.Request.Method);
                 try
                 {
-                    var actionEnvironment = action.MakeActionEnvironment(context.Request);
+                    var actionEnvironment = action.MakeActionEnvironment(context.Request, requestId);
                     try
                     {
                         returnResult = action.Run(actionEnvironment, context.Response);

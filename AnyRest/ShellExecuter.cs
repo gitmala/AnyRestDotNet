@@ -44,6 +44,7 @@ namespace AnyRest
 
             p.StartInfo.Environment.Add($"AnyRESTHttpMethod", actionEnvironment.RequestMethod);
             p.StartInfo.Environment.Add($"AnyRESTPath", actionEnvironment.RequestPath);
+            p.StartInfo.Environment.Add($"AnyRESTRequestId", actionEnvironment.RequestId);
             if (!String.IsNullOrEmpty(actionEnvironment.ContentType))
                 p.StartInfo.Environment.Add($"AnyRESTContentType", actionEnvironment.ContentType);
 
