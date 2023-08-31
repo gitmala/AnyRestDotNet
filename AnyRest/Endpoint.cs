@@ -89,7 +89,7 @@ namespace AnyRest
                         returnResult = Results.Problem("Something bad happened handeling request");
                     }
                 }
-                catch (ApplicationException ex)
+                catch (ArgumentException ex)
                 {
                     logStatusCode = HttpStatusCode.BadRequest;
                     logExtraText = ex.Message;

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 using ActionParm = System.Collections.Generic.KeyValuePair<string, string>;
@@ -9,7 +12,7 @@ namespace AnyRest
 {
     public class QueryParm
     {
-        public static readonly string[] QueryParmTypes = { "string", "int", "double", "bool" };
+        static readonly string[] QueryParmTypes = { "string", "int", "double", "bool" };
         public static string DefaultType() { return QueryParmTypes[0]; }
 
         public string Name;
@@ -23,6 +26,22 @@ namespace AnyRest
                 throw new ArgumentException($"Invalid query parm type {type}");
             Type = type;
             Optional = optional;
+        }
+
+        static readonly IFormatProvider provider = CultureInfo.CreateSpecificCulture("en-US");
+        public string CheckType(string queryParm)
+        {
+            switch (Type)
+            {
+                case "int":
+                    return int.Parse(queryParm).ToString(provider);
+                case "double":
+                    return double.Parse(queryParm, NumberStyles.Float, provider).ToString(provider);
+                case "bool":
+                    return bool.Parse(queryParm).ToString(provider);
+                default:
+                    return queryParm;
+            }
         }
     }
 
@@ -94,13 +113,35 @@ namespace AnyRest
         public ActionEnvironment MakeActionEnvironment(HttpRequest request, Guid requestId)
         {
             var actionEnvironment = new ActionEnvironment(request.Method, request.Path, ContentType, requestId, request.Body);
-
-            foreach (var queryParmConfig in queryParms)
+            var parsedQueryParms = QueryHelpers.ParseQuery(request.QueryString.Value);
+            foreach (var parsedQueryParm in parsedQueryParms)
             {
-                if (!request.Query.Keys.Contains(queryParmConfig.Name) && !queryParmConfig.Optional)
-                    throw new ApplicationException($"Missing query parameter {queryParmConfig.Name}");
+                if (parsedQueryParm.Value.Count > 1)
+                    throw new ArgumentException($"Duplicate query parameter not allowed (parameter \"{parsedQueryParm.Key}\")");
+            }
+
+            foreach (var queryParm in queryParms)
+            {
+                string queryParmStringValue = request.Query[queryParm.Name];
+                if (queryParmStringValue == null)
+                {
+                    if (!queryParm.Optional)
+                        throw new ArgumentException($"Missing query parameter \"{queryParm.Name}\"");
+                }
                 else
-                    actionEnvironment.AddQueryParm(queryParmConfig.Name, request.Query[queryParmConfig.Name]);
+                {
+                    string stringValue;
+                    try
+                    {
+                        stringValue = queryParm.CheckType(request.Query[queryParm.Name]);
+                    }
+                    catch
+                    {
+                        throw new ArgumentException($"\"{queryParm.Name}\" is not a valid {queryParm.Type}");
+                    }
+
+                    actionEnvironment.AddQueryParm(queryParm.Name, stringValue);
+                }
             }
 
             foreach (var routeValue in request.RouteValues)

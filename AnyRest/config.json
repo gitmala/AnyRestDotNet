@@ -25,7 +25,13 @@
 
 		{ "Id": "EnvTest", "Route": "{foo}/{bar}", "Actions":
 			[
-				{ "Method": "GET", "Type": "stream", "Arguments": "set AnyREST", "Parms": [ { "Name":"foo", "Type":"string"}, { "Name":"bar", "Type":"string"} ] , "ContentType": "text/plaintext", "DownloadFileName": "AnyRestEnv.txt"}
+				{ "Method": "GET", "Type": "stream", "Arguments": "set AnyREST", "Parms": [ { "Name":"foo", "Type":"string"}, { "Name":"bar", "Type":"string"} ] , "ContentType": "text/plaintext", "DownloadFileName": ""}
+			]
+		},
+
+		{ "Id": "TypeTest", "Route": "{foo:int}/{bar:double}", "Actions":
+			[
+				{ "Method": "GET", "Type": "stream", "Arguments": "set AnyREST", "Parms": [ { "Name":"foo", "Type":"int"}, { "Name":"bar", "Type":"double"}, { "Name":"foobar", "Type":"bool", "Optional": true} ] , "ContentType": "text/plaintext", "DownloadFileName": ""}
 			]
 		},
 
