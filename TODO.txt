@@ -1,0 +1,12 @@
+Bugs:
+
+Features:
+Regex type for query parameters
+Docker file
+Culture for URL and/or environtment vars
+Default value for query parameters
+
+Other:
+Allow non string values for route values
+Change Route name to route parameters everywhere
+Check culture for route parameters (like query parameters)
