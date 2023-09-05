@@ -7,10 +7,10 @@ namespace AnyRest
 {
     public class Service
     {
-        public static void StartService(Endpoints endpoints)
+        public static void StartService(EndpointList endpoints)
         {
             var builder = WebHost.CreateDefaultBuilder()
-                .ConfigureServices(x => x.AddSingleton<Endpoints>(endpoints))
+                .ConfigureServices(x => x.AddSingleton<EndpointList>(endpoints))
                 .ConfigureKestrel(options => options.Limits.MaxRequestBodySize = null)
                 .ConfigureKestrel(options => options.ListenAnyIP(3354))
                 .UseStartup<Startup>();

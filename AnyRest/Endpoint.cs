@@ -109,7 +109,7 @@ namespace AnyRest
         }
     }
 
-    public class Endpoints : List<Endpoint>
+    public class EndpointList : List<Endpoint>
     {
         Dictionary<string, Endpoint> usedBaseRoutes = new();
         

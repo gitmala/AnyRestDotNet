@@ -12,19 +12,19 @@ namespace AnyRest
         protected string Shell;
         protected string ArgumentsPrefix;
         protected string Arguments;
-        QueryParms queryParms;
+        QueryParmList QueryParms;
         protected string ContentType;
 
-        protected Action(string shell, string argumentsPrefix, string arguments, QueryParms queryParms, string contentType)
+        protected Action(string shell, string argumentsPrefix, string arguments, QueryParmList queryParms, string contentType)
         {
             Shell = shell;
             ArgumentsPrefix = argumentsPrefix;
             Arguments = arguments;
-            this.queryParms = queryParms;
+            QueryParms = queryParms;
             ContentType = contentType;
         }
 
-        public static Action Create(string type, string shell, string argumentsPrefix, string arguments, QueryParms queryParms, string contentType, string downloadFileName)
+        public static Action Create(string type, string shell, string argumentsPrefix, string arguments, QueryParmList queryParms, string contentType, string downloadFileName)
         {
             if (type == ActionTypes[0])
                 return new StreamAction(shell, argumentsPrefix, arguments, queryParms, contentType, downloadFileName);
@@ -44,7 +44,7 @@ namespace AnyRest
                     throw new ArgumentException($"Duplicate query parameter not allowed (parameter \"{parsedQueryParm.Key}\")");
             }
 
-            foreach (var queryParm in queryParms)
+            foreach (var queryParm in QueryParms)
             {
                 string queryParmStringValue = request.Query[queryParm.Name];
                 if (queryParmStringValue == null)
@@ -82,7 +82,7 @@ namespace AnyRest
 
     class CommandAction : Action
     {
-        public CommandAction(string shell, string argumentsPrefix, string arguments, QueryParms queryParms) : base(shell, argumentsPrefix, arguments, queryParms, null)
+        public CommandAction(string shell, string argumentsPrefix, string arguments, QueryParmList queryParms) : base(shell, argumentsPrefix, arguments, queryParms, null)
         {
         }
         public override IResult Run(ActionEnvironment actionEnvironment, HttpResponse response)
@@ -95,7 +95,7 @@ namespace AnyRest
     class StreamAction : Action
     {
         protected string DownloadFileName = null;
-        public StreamAction(string shell, string argumentsPrefix, string arguments, QueryParms queryParms, string contentType, string downloadFileName) : base(shell, argumentsPrefix, arguments, queryParms, contentType)
+        public StreamAction(string shell, string argumentsPrefix, string arguments, QueryParmList queryParms, string contentType, string downloadFileName) : base(shell, argumentsPrefix, arguments, queryParms, contentType)
         {
             if (string.IsNullOrEmpty(contentType))
                 ContentType = "application/octet-stream";

@@ -70,7 +70,7 @@ namespace AnyRest
 
         public Action AsAction(ActionDefaultsConfig actionDefaults, QueryparmDefaultsConfig queryparmDefaults)
         {
-            var queryParms = new QueryParms();
+            var queryParms = new QueryParmList();
             if (Parms != null)
             {
                 foreach (var parm in Parms)
@@ -135,7 +135,7 @@ namespace AnyRest
         public QueryparmDefaultsConfig QueryparmDefaults;
 
         public EndpointConfig[] Endpoints;
-        public Endpoints AsEndpoints()
+        public EndpointList AsEndpoints()
         {
             if (EndPointDefaults == null)
                 EndPointDefaults = new EndpointDefaultsConfig();
@@ -144,7 +144,7 @@ namespace AnyRest
             if (QueryparmDefaults == null)
                 QueryparmDefaults = new QueryparmDefaultsConfig();
 
-            var endpoints = new Endpoints();
+            var endpoints = new EndpointList();
             if (Endpoints != null)
             {
                 foreach (var Endpoint in Endpoints)
@@ -153,7 +153,7 @@ namespace AnyRest
             return endpoints;
         }
 
-        public static Endpoints LoadFromFile(string fileName)
+        public static EndpointList LoadFromFile(string fileName)
         {
             var configSchema = File.ReadAllText("configSchema.json");
             var config = File.ReadAllText(fileName);

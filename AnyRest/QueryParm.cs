@@ -40,5 +40,5 @@ namespace AnyRest
         }
     }
 
-    public class QueryParms : List<QueryParm> { }
+    public class QueryParmList : List<QueryParm> { }
 }

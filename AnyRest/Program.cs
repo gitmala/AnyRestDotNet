@@ -25,7 +25,7 @@ namespace AnyRest
             else
             {
                 var filename = "config.json";
-                Endpoints endpoints;
+                EndpointList endpoints;
 #if !DEBUG
                 try
                 {

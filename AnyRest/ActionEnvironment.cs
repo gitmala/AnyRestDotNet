@@ -5,12 +5,12 @@ using ActionParm = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace AnyRest
 {
-    public class ActionParms : List<ActionParm> { }
+    public class ActionParmList : List<ActionParm> { }
 
     public class ActionEnvironment
     {
-        public ActionParms QueryParms = new();
-        public ActionParms RouteValues = new();
+        public ActionParmList QueryParms = new();
+        public ActionParmList RouteValues = new();
         public string RequestMethod = null;
         public string RequestPath = null;
         public string RequestId = null;

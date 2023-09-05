@@ -54,7 +54,7 @@ namespace AnyRest
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "test");
             });
 
-            var userEndpoints = (Endpoints)app.ApplicationServices.GetService(typeof(Endpoints));
+            var userEndpoints = (EndpointList)app.ApplicationServices.GetService(typeof(EndpointList));
 
             app.UseEndpoints(endpoints =>
             {
