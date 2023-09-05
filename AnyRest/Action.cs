@@ -1,85 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-
-using ActionParm = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace AnyRest
 {
-    public class QueryParm
-    {
-        static readonly string[] QueryParmTypes = { "string", "int", "double", "bool" };
-        public static string DefaultType() { return QueryParmTypes[0]; }
-
-        public string Name;
-        public string Type;
-        public bool Optional;
-
-        public QueryParm(string name, string type, bool optional)
-        {
-            Name = name;
-            if (!QueryParmTypes.Contains(type))
-                throw new ArgumentException($"Invalid query parm type {type}");
-            Type = type;
-            Optional = optional;
-        }
-
-        static readonly IFormatProvider provider = CultureInfo.CreateSpecificCulture("en-US");
-        public string CheckType(string queryParm)
-        {
-            switch (Type)
-            {
-                case "int":
-                    return int.Parse(queryParm).ToString(provider);
-                case "double":
-                    return double.Parse(queryParm, NumberStyles.Float, provider).ToString(provider);
-                case "bool":
-                    return bool.Parse(queryParm).ToString(provider);
-                default:
-                    return queryParm;
-            }
-        }
-    }
-
-    public class QueryParms : List<QueryParm> { }
-
-    public class ActionParms : List<ActionParm> { }
-
-    public class ActionEnvironment
-    {
-        public ActionParms QueryParms = new();
-        public ActionParms RouteValues = new();
-        public string RequestMethod = null;
-        public string RequestPath = null;
-        public string RequestId = null;
-        public string ContentType = null;
-        public System.IO.Stream RequestBody = null;
-
-        public ActionEnvironment(string requestMethod, string requestPath, string contentType, Guid requestId, System.IO.Stream requestBody)
-        {
-            RequestMethod = requestMethod;
-            RequestPath = requestPath;
-            RequestBody = requestBody;
-            ContentType = contentType;
-            RequestId = requestId.ToString();
-        }
-
-        public void AddQueryParm(string name, string value)
-        {
-            QueryParms.Add(new ActionParm(name, value));
-        }
-
-        public void AddRouteParm(string name, string value)
-        {
-            RouteValues.Add(new ActionParm(name, value));
-        }
-
-    }
-
     public abstract class Action
     {
         static readonly string[] ActionTypes = { "stream" , "command" };
