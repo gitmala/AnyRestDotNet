@@ -60,7 +60,8 @@ namespace AnyRest
             {
                 if (process.Start())
                 {
-                    Task.Run(() => StreamBodyToStdInput(actionEnvironment.RequestBody, process.StandardInput.BaseStream));
+                    var standardInput = process.StandardInput.BaseStream;
+                    Task.Run(() => StreamBodyToStdInput(actionEnvironment.RequestBody, standardInput));
                     return process;
                 }
                 else
