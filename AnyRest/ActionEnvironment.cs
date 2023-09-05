@@ -9,13 +9,13 @@ namespace AnyRest
 
     public class ActionEnvironment
     {
-        public ActionParmList QueryParms = new();
-        public ActionParmList RouteValues = new();
-        public string RequestMethod = null;
-        public string RequestPath = null;
-        public string RequestId = null;
-        public string ContentType = null;
-        public System.IO.Stream RequestBody = null;
+        public ActionParmList QueryParms { get; set; } = new();
+        public ActionParmList RouteValues { get; set; } = new();
+        public string RequestMethod { get; set; }
+        public string RequestPath { get; set; }
+        public string RequestId { get; set; }
+        public string ContentType { get; set; }
+        public System.IO.Stream RequestBody { get; set; }
 
         public ActionEnvironment(string requestMethod, string requestPath, string contentType, Guid requestId, System.IO.Stream requestBody)
         {

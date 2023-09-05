@@ -78,7 +78,7 @@ namespace AnyRest
 
     class StreamAction : Action
     {
-        protected string DownloadFileName = null;
+        string DownloadFileName;
         public StreamAction(string shell, string argumentsPrefix, string arguments, QueryParmList queryParms, string contentType, string downloadFileName) : base(shell, argumentsPrefix, arguments, queryParms, contentType)
         {
             if (string.IsNullOrEmpty(contentType))

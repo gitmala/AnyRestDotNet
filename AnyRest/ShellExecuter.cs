@@ -73,7 +73,7 @@ namespace AnyRest
             }
         }
 
-        public static void WaitForProcessExit(Process process, int timeOut)
+        static void WaitForProcessExit(Process process, int timeOut)
         {
             if (!process.WaitForExit(timeOut))
                 process.Kill(true);

@@ -7,12 +7,12 @@ namespace AnyRest
 {
     public class QueryParm
     {
-        static readonly string[] QueryParmTypes = { "string", "int", "double", "bool" };
-        public static string DefaultType() { return QueryParmTypes[0]; }
-
-        public string Name;
+        public string Name { get; set; }
         string Type;
         bool Optional;
+
+        static readonly string[] QueryParmTypes = { "string", "int", "double", "bool" };
+        public static string DefaultType() { return QueryParmTypes[0]; }
 
         public QueryParm(string name, string type, bool optional)
         {

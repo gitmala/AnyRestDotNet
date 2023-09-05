@@ -8,9 +8,9 @@ namespace AnyRest
 {
     public class Endpoint
     {
-        public string Id;
-        public string BaseRoute;
-        public string FullRoute;
+        public string Id { get; set; }
+        public string BaseRoute { get; set; }
+        public string FullRoute { get; set; }
 
         Dictionary<string, Action> VerbActions;
 
