@@ -10,3 +10,4 @@ Other:
 Allow non string values for route values
 Change Route name to route parameters everywhere
 Check culture for route parameters (like query parameters)
+Base64 encode content of command type
