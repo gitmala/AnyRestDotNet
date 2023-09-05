@@ -11,6 +11,7 @@ namespace AnyRest
         public string Id;
         public string BaseRoute;
         public string FullRoute;
+
         Dictionary<string, Action> VerbActions;
 
         const string InvalidChars = "{}*:";

@@ -82,11 +82,11 @@ namespace AnyRest
 
     public abstract class Action
     {
-        public static readonly string[] ActionTypes = { "stream" , "command" };
+        static readonly string[] ActionTypes = { "stream" , "command" };
         public static string DefaultType() { return ActionTypes[0]; }
 
-        public string Shell;
-        public string ArgumentsPrefix;
+        protected string Shell;
+        protected string ArgumentsPrefix;
         protected string Arguments;
         QueryParms queryParms;
         protected string ContentType;
