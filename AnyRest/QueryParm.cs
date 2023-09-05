@@ -11,8 +11,8 @@ namespace AnyRest
         public static string DefaultType() { return QueryParmTypes[0]; }
 
         public string Name;
-        public string Type;
-        public bool Optional;
+        string Type;
+        bool Optional;
 
         public QueryParm(string name, string type, bool optional)
         {
@@ -24,18 +24,34 @@ namespace AnyRest
         }
 
         static readonly IFormatProvider provider = CultureInfo.CreateSpecificCulture("en-US");
-        public string CheckType(string queryParm)
+        public string GetValidated(string queryParm)
         {
-            switch (Type)
+            if (queryParm == null)
             {
-                case "int":
-                    return int.Parse(queryParm).ToString(provider);
-                case "double":
-                    return double.Parse(queryParm, NumberStyles.Float, provider).ToString(provider);
-                case "bool":
-                    return bool.Parse(queryParm).ToString(provider);
-                default:
-                    return queryParm;
+                if (!Optional)
+                    throw new ArgumentException($"Missing query parameter \"{Name}\"");
+                return null;
+            }
+            else
+            {
+                try
+                {
+                    switch (Type)
+                    {
+                        case "int":
+                            return int.Parse(queryParm).ToString(provider);
+                        case "double":
+                            return double.Parse(queryParm, NumberStyles.Float, provider).ToString(provider);
+                        case "bool":
+                            return bool.Parse(queryParm).ToString(provider);
+                        default:
+                            return queryParm;
+                    }
+                }
+                catch
+                {
+                    throw new ArgumentException($"\"{Name}\" is not a valid {Type}");
+                }
             }
         }
     }

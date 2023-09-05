@@ -36,7 +36,6 @@ namespace AnyRest
 
         public ActionEnvironment MakeActionEnvironment(HttpRequest request, Guid requestId)
         {
-            var actionEnvironment = new ActionEnvironment(request.Method, request.Path, ContentType, requestId, request.Body);
             var parsedQueryParms = QueryHelpers.ParseQuery(request.QueryString.Value);
             foreach (var parsedQueryParm in parsedQueryParms)
             {
@@ -44,28 +43,13 @@ namespace AnyRest
                     throw new ArgumentException($"Duplicate query parameter not allowed (parameter \"{parsedQueryParm.Key}\")");
             }
 
+            var actionEnvironment = new ActionEnvironment(request.Method, request.Path, ContentType, requestId, request.Body);
+
             foreach (var queryParm in QueryParms)
             {
-                string queryParmStringValue = request.Query[queryParm.Name];
-                if (queryParmStringValue == null)
-                {
-                    if (!queryParm.Optional)
-                        throw new ArgumentException($"Missing query parameter \"{queryParm.Name}\"");
-                }
-                else
-                {
-                    string stringValue;
-                    try
-                    {
-                        stringValue = queryParm.CheckType(request.Query[queryParm.Name]);
-                    }
-                    catch
-                    {
-                        throw new ArgumentException($"\"{queryParm.Name}\" is not a valid {queryParm.Type}");
-                    }
-
+                var stringValue = queryParm.GetValidated(request.Query[queryParm.Name]);
+                if (stringValue != null)
                     actionEnvironment.AddQueryParm(queryParm.Name, stringValue);
-                }
             }
 
             foreach (var routeValue in request.RouteValues)
