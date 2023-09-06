@@ -1,10 +1,19 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 
 namespace AnyRest
 {
     class StreamUtils
     {
+        public static string GetEmbeddedResource(string ns, string res)
+        {
+            using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(string.Format("{0}.{1}", ns, res))))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
         const int bufferSize = 4096;
         public static void CopyStream(Stream inStream, Stream outStream)
         {   

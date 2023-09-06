@@ -18,10 +18,10 @@ namespace AnyRest
 
         [Route("configschema")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult configschema() {
-            var gen = new Newtonsoft.Json.Schema.Generation.JSchemaGenerator();
-            var schema = gen.Generate(typeof(FileConfig));
-            return Ok(schema);
+        public IActionResult configschema()
+        {
+            var configSchema = StreamUtils.GetEmbeddedResource("AnyRest", "ConfigSchema.json");
+            return Ok(configSchema);
         }
     }
 }

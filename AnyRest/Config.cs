@@ -155,7 +155,7 @@ namespace AnyRest
 
         public static EndpointList LoadFromFile(string fileName)
         {
-            var configSchema = File.ReadAllText("ConfigSchema.json");
+            var configSchema = StreamUtils.GetEmbeddedResource("AnyRest", "ConfigSchema.json");
             var config = File.ReadAllText(fileName);
 
             var reader = new JsonTextReader(new StringReader(config));
