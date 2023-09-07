@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 
 namespace AnyRest
@@ -25,6 +26,14 @@ namespace AnyRest
             else
             {
                 var filename = "config.json";
+                if (args.Length > 0)
+                    filename = args[0];
+                if (!File.Exists(filename))
+                {
+                    Console.Write($"Config file \"{filename}\" not found");
+                    return 1;
+                }
+
                 EndpointList endpoints;
 #if !DEBUG
                 try
@@ -38,7 +47,7 @@ namespace AnyRest
                     Console.WriteLine($"Config error: {ex.Message}");
                     return 1;
                 }
-#endif
+#endif          
                 Console.WriteLine($"Endpoints from file {filename}");
                 foreach (var endpoint in endpoints)
                 {

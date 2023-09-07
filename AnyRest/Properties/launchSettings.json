@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AnyRest": {
+      "commandName": "Project",
+      "commandLineArgs": "..\\..\\..\\Config.json"
+    }
+  }
+}
