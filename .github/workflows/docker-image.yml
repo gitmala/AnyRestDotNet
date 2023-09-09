@@ -20,6 +20,6 @@ jobs:
         DOCKER_PASS: ${{secrets.DOCKERHUB_TOKEN}}
       run: docker login -u ${{secrets.DOCKERHUB_USER}} -p ${{secrets.DOCKERHUB_TOKEN}}
     - name: Build the Docker image
-      run: docker build . --file AnyRest/Dockerfile --tag AnyRestDotNet:$(date +%s)
+      run: docker build . --file AnyRest/Dockerfile --tag anyrestdotnet:$(date +%s)
     - name: Docker push
       run: docker push ${{secrets.DOCKERHUB_USER}}/anyrestdotnet
