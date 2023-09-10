@@ -48,7 +48,7 @@ namespace AnyRest
                             return queryParm;
                     }
                 }
-                catch
+                catch (FormatException)
                 {
                     throw new ArgumentException($"\"{Name}\" is not a valid {Type}");
                 }

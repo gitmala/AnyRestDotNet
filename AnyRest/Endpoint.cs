@@ -37,7 +37,14 @@ namespace AnyRest
 
             FullRoute = $"/{BaseRoute}/{route.Trim('/')}".TrimEnd('/');
 
-            VerbActions = new Dictionary<string, Action>(verbActions);
+            try
+            {
+                VerbActions = new Dictionary<string, Action>(verbActions);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException($"Endpoint: {Id}, Actions setup: {ex.Message}");
+            }
         }
 
         public Action GetAction(string verb)
