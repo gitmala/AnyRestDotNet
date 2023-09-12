@@ -33,9 +33,9 @@ namespace AnyRest
 
             Id = id;
 
-            BaseRoute = $"{routePrefix.Trim('/')}/{id}";
+            BaseRoute = $"{routePrefix.Trim('/')}/{id}".Trim('/');
 
-            FullRoute = $"/{BaseRoute}/{route.Trim('/')}".TrimEnd('/');
+            FullRoute = $"{BaseRoute}/{route.Trim('/')}".TrimEnd('/');
 
             try
             {
